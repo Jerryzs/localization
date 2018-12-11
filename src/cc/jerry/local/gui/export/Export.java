@@ -337,8 +337,8 @@ public class Export extends Application {
 								pFile.setProperty(json.getJSONArray("Keys").getString(j), StringEscapeUtils.unescapeJava(json.getJSONObject("Target Languages").getJSONArray(lang).getString(j))); 
 							}
 							
-							try {
-								pFile.store(new OutputStreamWriter(new FileOutputStream(new File(folder.getAbsolutePath() + File.separator + fileName + fileSuffixEntry.getText())), "UTF-8"), null);
+							try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(folder.getAbsolutePath() + File.separator + fileName + fileSuffixEntry.getText())), "UTF-8")) {
+								pFile.store(writer, null); 
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
