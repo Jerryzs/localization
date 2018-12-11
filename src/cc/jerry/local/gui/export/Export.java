@@ -330,7 +330,6 @@ public class Export extends Application {
 								
 						}
 						
-						
 						if (fileFormatList.getSelectionModel().getSelectedIndex() == 0) {
 							Properties pFile = new Properties(); 
 							
@@ -343,10 +342,8 @@ public class Export extends Application {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-							
-							return; 
 						}
-						if (fileFormatList.getSelectionModel().getSelectedIndex() == 1) {
+						else if (fileFormatList.getSelectionModel().getSelectedIndex() == 1) {
 							try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(folder.getAbsolutePath() + File.separator + fileName + fileSuffixEntry.getText())), "UTF-8"))) {
 								writer.println("{");
 								for (int j = 0; j < json.getJSONArray("Keys").length(); j++) {
@@ -360,13 +357,11 @@ public class Export extends Application {
 							} catch (UnsupportedEncodingException e1) {
 								e1.printStackTrace();
 							}
-							
-							return; 
 						}
-						
-						String syntax = CustomizedFileFormats.syntax(fileFormatList.getSelectionModel().getSelectedIndex() - 2); 
-						
-						System.out.println("\n" + CustomizedFileFormats.parse(syntax));
+						else {
+							String syntax = CustomizedFileFormats.syntax(fileFormatList.getSelectionModel().getSelectedIndex() - 2); 
+							System.out.println("\n" + CustomizedFileFormats.parse(syntax));
+						}
 					}
 				}
 			}
