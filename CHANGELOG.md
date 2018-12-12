@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.1 Beta
+
+## Changed & Improved
+- Significantly shortened the launch time by running part of the initialization process inside a thread. 
+- Project configuration file will be occupied by the software after being opened. 
+
 ## v0.6 Beta
 
 ## Added
