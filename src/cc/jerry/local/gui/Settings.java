@@ -74,7 +74,14 @@ public class Settings {
 		language = new Label(get("gui.label.language")); 
 		language.setFont(labelsFont); 
 		
+		for (Locale locale : Locale.getAvailableLocales()) {
+			if (Localization.appLanguage.equals(locale.toLanguageTag())) {
+				appLanguage = locale.getDisplayName(); 
+			}
+		}
+		
 		languageSelections = new ComboBoxWithSearchBar<String>(); 
+		languageSelections.getItems().add(get("gui.text.systemdefault")); 
 		for (Locale locale : Locale.getAvailableLocales()) {
 			for (String file : Localization.langFiles) {
 				file = FilenameUtils.removeExtension(file); 
@@ -83,15 +90,14 @@ public class Settings {
 				}
 			}
 		} 
+		if (AppConfig.config().getProperty("language").equals("System Default"))
+			languageSelections.getSelectionModel().select(0); 
+		else
+			languageSelections.getSelectionModel().select(appLanguage); 
 		
-		for (Locale locale : Locale.getAvailableLocales()) {
-			if (Localization.appLanguage.equals(locale.toLanguageTag())) {
-				appLanguage = locale.getDisplayName(); 
-			}
-		}
-		
-		languageSelected = new Label(get("gui.label.selected") + appLanguage); 
+		languageSelected = new Label(get("gui.label.selected") + " " + languageSelections.getSelectedItem()); 
 		languageSelected.setFont(labelsFont); 
+		
 		
 		aBtns = new HBox(); 
 		aBtns.setSpacing(10); 
@@ -104,7 +110,6 @@ public class Settings {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				closed = true; 
 				primaryStage.close(); 
 			}
 			
@@ -117,14 +122,21 @@ public class Settings {
 
 			@Override
 			public void handle(ActionEvent event) {
+				closed = true; 
+				
 				if (languageSelections.getSelectedItem() != null) {
 					AppConfig.read(); 
 					
 					String langTag = null; 
-					for (Locale locale : Locale.getAvailableLocales()) {
-						if (locale.getDisplayName().equals(languageSelections.getSelectedItem())) {
-							langTag = locale.toLanguageTag(); 
-							break; 
+					
+					if (languageSelections.getSelectedItem().equals(get("gui.text.systemdefault")))
+						langTag = "System Default"; 
+					else {
+						for (Locale locale : Locale.getAvailableLocales()) {
+							if (locale.getDisplayName().equals(languageSelections.getSelectedItem())) {
+								langTag = locale.toLanguageTag(); 
+								break; 
+							}
 						}
 					}
 					
@@ -136,7 +148,7 @@ public class Settings {
 					else 
 						new Localization("/main/resources/langs/", "en-US", AppConfig.config().getProperty("language"), ".lang", getClass());
 					
-					languageSelected.setText(get("gui.label.selected") + languageSelections.getSelectedItem()); 
+					languageSelected.setText(get("gui.label.selected") + " " + languageSelections.getSelectedItem()); 
 				}
 			}
 			
