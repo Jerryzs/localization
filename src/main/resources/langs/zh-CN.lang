@@ -9,6 +9,7 @@ gui.main.rename=重命名
 gui.main.exportoptions=导出选项
 gui.main.customizedfileformat=自定义文件格式
 gui.main.message=提示
+gui.main.settings=设置
 
 #menu: Default
 gui.menu.default=管理器
@@ -18,6 +19,7 @@ gui.menu.file=文件
 gui.menu.file.new=新建项目
 gui.menu.file.open=打开
 gui.menu.file.export=导出
+gui.menu.file.settings=设置
 
 #menu: Edit
 gui.menu.edit=编辑
@@ -58,12 +60,19 @@ gui.label.exportdirectory=导出目录：
 gui.label.close=关闭
 gui.label.export=导出
 gui.label.done=完成
+gui.label.language=语言: 
+gui.label.selected=选择： 
+gui.label.options=选项： 
+gui.label.combinealllangs=合并所有语言到一个文件中？
+gui.label.specifycountryinfilenames=在语言文件名中包含国家名称？
 
 #texts
 gui.text.untitled=未命名
 gui.text.createnewfolder=新建文件夹
 gui.text.about=关于
 gui.text.version=版本
+gui.text.files=文件
+gui.text.systemdefault=系统默认
 
 #function buttons
 gui.functions.repeat.begin=Repeat Begin

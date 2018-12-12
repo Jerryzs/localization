@@ -64,12 +64,15 @@ gui.label.language=Language:
 gui.label.selected=Selected:
 gui.label.options=Options: 
 gui.label.combinealllangs=Combine All Languages in One File? 
+gui.label.specifycountryinfilenames=Specify Country In Filenames: 
 
 #texts
 gui.text.untitled=Untitled
 gui.text.createnewfolder=Create New Folder
 gui.text.about=About
 gui.text.version=Version
+gui.text.files=Files
+gui.text.systemdefault=System Default
 
 #function buttons
 gui.functions.repeat.begin=Repeat Begin
