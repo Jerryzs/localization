@@ -32,6 +32,7 @@ public class ProjectConfig {
 	
 	private static JSONObject config; 
 	private static File file; 
+	private static BufferedReader reader; 
 	
 	public static void write(JSONObject json) {
 		BufferedWriter writer = null;
@@ -55,15 +56,14 @@ public class ProjectConfig {
 		if (file.exists()) { 
 			System.out.println(file.getAbsolutePath()); 
 			try {
-				BufferedReader reader = new BufferedReader(new FileReader(file)); 
+				if (reader != null) reader.close(); 
+				reader = new BufferedReader(new FileReader(file)); 
 				
 				StringBuilder sb = new StringBuilder();
 		        int cp;
 		        while ((cp = reader.read()) != -1) {
 		            sb.append((char) cp);
 		        }
-		        
-		        reader.close(); 
 		        
 		        config = new JSONObject(sb.toString()); 
 		        
