@@ -5,7 +5,7 @@ This project is licensed under Apache License 2.0, see [here](https://www.apache
 
 ## Introduction
 This application allows you to organize and export localization files for your Java project (and perhaps other projects as well). <br>
-*It might take a while for the application to launch, this may be fixed in future updates.*
+*It takes a while for the application to launch, this may be fixed in future updates.*
 
 ## Contribute
 If you'd like to contribute to this project, please follow these requirements: 

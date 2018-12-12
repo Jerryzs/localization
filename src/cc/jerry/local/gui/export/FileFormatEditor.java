@@ -18,8 +18,6 @@ package cc.jerry.local.gui.export;
 
 import static cc.jerry.commons.util.Localization.get;
 
-import java.util.ArrayList;
-
 import cc.jerry.local.gui.MainGUI;
 import cc.jerry.local.utils.CustomizedFileFormats;
 import javafx.application.Application;
@@ -84,7 +82,6 @@ public class FileFormatEditor extends Application {
 	private static String _name; 
 	private static String _syntax; 
 	private static int _index; 
-	private static ArrayList<Integer> reIndexes = new ArrayList<Integer>(); 
 	public static boolean saveClicked = false; 
 	
 	public void start(Stage primaryStage, String name, String syntax, int index) {
