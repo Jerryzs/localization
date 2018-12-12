@@ -18,13 +18,12 @@ package cc.jerry.local.gui.popups;
 
 import static cc.jerry.commons.util.Localization.get;
 
-import java.util.Locale;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cc.jerry.commons.javafx.ComboBoxWithSearchBar;
 import cc.jerry.local.gui.MainGUI;
+import cc.jerry.local.utils.LocaleUtils;
 import cc.jerry.local.utils.ProjectConfig;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -67,9 +66,11 @@ public class AddTargetLanguage extends Application {
 		root.setVgap(10); 
 		
 		languages = new ComboBoxWithSearchBar<String>(); 
-		for (Locale lang : Locale.getAvailableLocales()) 
-			if (lang.getDisplayName().contains("("))
-				languages.getItems().add(lang.getDisplayName()); 
+		A: for (String lang : LocaleUtils.getAllLocaleNames()) {
+			for (String item : ProjectConfig.json().getJSONObject("Target Languages").keySet().toArray(new String[0]))
+				if (item.contains(lang)) continue A; 
+			languages.getItems().add(lang); 
+		}
 		languages.getItems().sort(null); 
 		languages.getItems().remove(0); 
 		
