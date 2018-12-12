@@ -299,7 +299,7 @@ public class Editor extends Application{
 			
 		});
 		
-		cancel = new Button(get("gui.label.cancel")); 
+		cancel = new Button(get("gui.label.close")); 
 		cancel.setFont(labelsFont); 
 		cancel.setCancelButton(true); 
 		cancel.setOnAction(new EventHandler<ActionEvent>() {
