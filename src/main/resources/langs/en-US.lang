@@ -65,6 +65,7 @@ gui.label.selected=Selected:
 gui.label.options=Options: 
 gui.label.combinealllangs=Combine All Languages in One File? 
 gui.label.specifycountryinfilenames=Specify Country In Filenames: 
+gui.label.comebacklater=Come Back Later
 
 #texts
 gui.text.untitled=Untitled
@@ -86,3 +87,4 @@ gui.message.removeconfirmationmessage=Are you sure you want to remove this?
 gui.message.fileisinvalid=File is invalid
 gui.message.underdevelopment=(Coming Soon)
 gui.message.filenotcreatederror=File could not be created. 
+gui.message.pleasewaitforinit=Please wait for initialization (takes about 1 minute after app launched)

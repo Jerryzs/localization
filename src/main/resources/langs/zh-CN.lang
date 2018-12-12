@@ -65,6 +65,7 @@ gui.label.selected=选择：
 gui.label.options=选项： 
 gui.label.combinealllangs=合并所有语言到一个文件中？
 gui.label.specifycountryinfilenames=在语言文件名中包含国家名称？
+gui.label.comebacklater=稍后查看
 
 #texts
 gui.text.untitled=未命名
@@ -86,3 +87,4 @@ gui.message.removeconfirmationmessage=确认删除?
 gui.message.fileisinvalid=文件错误
 gui.message.underdevelopment=（即将到来）
 gui.message.filenotcreatederror=无法创建文件
+gui.message.pleasewaitforinit=请等待软件完成初始化 (启动后大约1分钟)
