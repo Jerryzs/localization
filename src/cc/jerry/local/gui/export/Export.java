@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import cc.jerry.local.gui.MainGUI;
 import cc.jerry.local.gui.popups.RemoveConfirmation;
 import cc.jerry.local.utils.CustomizedFileFormats;
+import cc.jerry.local.utils.LocaleUtils;
 import cc.jerry.local.utils.ProjectConfig;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -204,11 +205,13 @@ public class Export extends Application {
 		fileNameFormat.setFont(labelsFont); 
 		
 		fileNameFormatList = new ComboBox<String>(); 
-		fileNameFormatList.getItems().add("en_US"); 
-		fileNameFormatList.getItems().add("en-US"); 
 		fileNameFormatList.getItems().add("en"); 
 		fileNameFormatList.getItems().add("english"); 
 		fileNameFormatList.getItems().add("English"); 
+		if (ProjectConfig.json().getBoolean("Specify Country in Filenames")) {
+			fileNameFormatList.getItems().add("en_US"); 
+			fileNameFormatList.getItems().add("en-US"); 
+		}
 		fileNameFormatList.getSelectionModel().select(0); 
 		
 		directory = new Label(get("gui.label.exportdirectory")); 
@@ -291,38 +294,32 @@ public class Export extends Application {
 					
 					JSONObject json = ProjectConfig.json(); 
 					
-				
-					for (String lang : json.getJSONObject("Target Languages").keySet().toArray(new String[json.getJSONObject("Target Languages").keySet().size()])) {
-						Locale locale = null; 
+					for (String lang : json.getJSONObject("Target Languages").keySet().toArray(new String[0])) {
+						Locale locale = LocaleUtils.nameToLocale(lang); 
 						
-						for (Locale l : Locale.getAvailableLocales()) {
-							if (l.getDisplayName().equals(lang)) {
-								locale = l; 
-								break; 
-							}
-						}
+						System.out.println(lang); 
 						
 						String fileName = null; 
 						
 						switch (fileNameFormatList.getSelectionModel().getSelectedIndex()) {
-							case 0:
-								fileName = locale.getLanguage() + "_" + locale.getCountry(); 
-								break; 
-								
-							case 1:
-								fileName = locale.getLanguage() + "-" + locale.getCountry(); 
-								break; 
-								
-							case 2: 
+							case 0: 
 								fileName = locale.getLanguage(); 
 								break; 
 								
-							case 3:
+							case 1:
 								fileName = locale.getDisplayLanguage(Locale.ENGLISH).toLowerCase(); 
 								break; 
 								
-							case 4: 
+							case 2: 
 								fileName = locale.getDisplayLanguage(Locale.ENGLISH); 
+								break; 
+								
+							case 3:
+								fileName = locale.getLanguage() + "_" + locale.getCountry(); 
+								break; 
+								
+							case 4:
+								fileName = locale.getLanguage() + "-" + locale.getCountry(); 
 								break; 
 								
 							default:
@@ -341,7 +338,7 @@ public class Export extends Application {
 								pFile.store(writer, null); 
 							} catch (IOException e) {
 								e.printStackTrace();
-							}
+							} 
 						}
 						else if (fileFormatList.getSelectionModel().getSelectedIndex() == 1) {
 							try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(folder.getAbsolutePath() + File.separator + fileName + fileSuffixEntry.getText())), "UTF-8"))) {
@@ -362,6 +359,8 @@ public class Export extends Application {
 							String syntax = CustomizedFileFormats.syntax(fileFormatList.getSelectionModel().getSelectedIndex() - 2); 
 							System.out.println("\n" + CustomizedFileFormats.parse(syntax));
 						}
+						
+						primaryStage.close(); 
 					}
 				}
 			}

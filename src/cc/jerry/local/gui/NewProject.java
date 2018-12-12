@@ -24,14 +24,13 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cc.jerry.commons.javafx.ComboBoxWithSearchBar;
-import cc.jerry.commons.javafx.ListViewWithSearchBar;
 import cc.jerry.local.gui.popups.PopUpMessage;
+import cc.jerry.local.utils.LocaleUtils;
 import cc.jerry.local.utils.ProjectConfig;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -41,12 +40,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -57,7 +58,8 @@ import javafx.stage.Stage;
 
 public class NewProject extends Application{
 	//--------------------
-	GridPane root; 
+	BorderPane root; 
+	GridPane center; 
 	Scene scene; 
 	
 	Label projectName; 
@@ -68,7 +70,12 @@ public class NewProject extends Application{
 	Button projectDirBtn; 
 	
 	Label setSourceLanguage; 
-	ComboBox<String> sourceLanguageSelections; 
+	ComboBoxWithSearchBar<String> sourceLanguageSelections; 
+	
+	Label specifyCountryInFilenames; 
+	ToggleGroup specifyCountryInFilenamesOptions; 
+	RadioButton specifyCountryInFilenamesYes; 
+	RadioButton specifyCountryInFilenamesNo; 
 	
 	Label selectTargetLanguages; 
 	ListView<String> selectedLanguages; 
@@ -76,7 +83,7 @@ public class NewProject extends Application{
 	Button removeSLanguage; 
 	ListView<String> allLanguages; 
 	
-	HBox aButtons; 
+	HBox aBtns; 
 	Button save; 
 	Button cancel; 
 	//--------------------
@@ -87,10 +94,12 @@ public class NewProject extends Application{
 	public static boolean closed = false; 
 	
 	public void start(Stage primaryStage) {
-		root = new GridPane(); 
-		root.setHgap(10);
-		root.setVgap(10); 
-		root.setPadding(new Insets(10));
+		root = new BorderPane(); 
+		
+		center = new GridPane(); 
+		center.setHgap(10);
+		center.setVgap(10); 
+		center.setPadding(new Insets(10));
 		
 		projectName = new Label(get("gui.label.projectname")); 
 		projectName.setFont(labelsFont); 
@@ -136,11 +145,40 @@ public class NewProject extends Application{
 		setSourceLanguage.setFont(labelsFont); 
 		
 		sourceLanguageSelections = new ComboBoxWithSearchBar<String>(); 
-		for (Locale locale : Locale.getAvailableLocales()) {
-			if (locale.getDisplayName().contains("("))
-				sourceLanguageSelections.getItems().add(locale.getDisplayName()); 
+		for (String locale : LocaleUtils.getAllLocaleNames(true)) {
+			sourceLanguageSelections.getItems().add(locale); 
 		}
 		sourceLanguageSelections.getItems().sort(null); 
+		
+		specifyCountryInFilenames = new Label(get("gui.label.specifycountryinfilenames")); 
+		specifyCountryInFilenames.setFont(labelsFont); 
+		
+		specifyCountryInFilenamesOptions = new ToggleGroup(); 
+		
+		specifyCountryInFilenamesYes = new RadioButton(get("gui.label.yes")); 
+		specifyCountryInFilenamesYes.setToggleGroup(specifyCountryInFilenamesOptions); 
+		specifyCountryInFilenamesYes.setSelected(true); 
+		specifyCountryInFilenamesYes.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				updateLanguages(); 
+				sourceLanguageSelections.updateItems(); 
+			}
+			
+		});
+		
+		specifyCountryInFilenamesNo = new RadioButton(get("gui.label.no")); 
+		specifyCountryInFilenamesNo.setToggleGroup(specifyCountryInFilenamesOptions); 
+		specifyCountryInFilenamesNo.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				updateLanguages(); 
+				sourceLanguageSelections.updateItems(); 
+			}
+			
+		});
 		
 		selectTargetLanguages = new Label(get("gui.label.selecttargetlanguages")); 
 		selectTargetLanguages.setFont(labelsFont); 
@@ -176,15 +214,15 @@ public class NewProject extends Application{
 			
 		});
 		
-		allLanguages = new ListViewWithSearchBar<String>(projectNameEntry); 
-		for (Locale locale : Locale.getAvailableLocales()) {
-			if (!locale.getDisplayName().equals("") && locale.getDisplayName().contains("("))
-				allLanguages.getItems().add(locale.getDisplayName()); 
+		allLanguages = new ListView<String>(); 
+		for (String locale : LocaleUtils.getAllLocaleNames(true)) {
+			allLanguages.getItems().add(locale); 
 		}
 		allLanguages.getItems().sort(null); 
 		
 		save = new Button(get("gui.label.save")); 
 		save.setFont(labelsFont); 
+		save.setDefaultButton(true); 
 		save.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -196,6 +234,7 @@ public class NewProject extends Application{
 		
 		cancel = new Button(get("gui.label.cancel")); 
 		cancel.setFont(labelsFont); 
+		cancel.setCancelButton(true); 
 		cancel.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -205,40 +244,64 @@ public class NewProject extends Application{
 			
 		});
 		
-		aButtons = new HBox(); 
-		aButtons.getChildren().addAll(cancel, save); 
-		aButtons.setSpacing(10); 
-		aButtons.setAlignment(Pos.CENTER_RIGHT);
+		aBtns = new HBox(); 
+		aBtns.getChildren().addAll(cancel, save); 
+		aBtns.setSpacing(10); 
+		aBtns.setPadding(new Insets(10)); 
+		aBtns.setAlignment(Pos.CENTER);
 		
-		root.add(projectName, 0, 0);
-		root.add(projectNameEntry, 1, 0, 4, 1); 
-		root.add(projectDir, 0, 1); 
-		root.add(projectDirEntry, 1, 1, 3, 1); 
-		root.add(projectDirBtn, 4, 1); 
-		root.add(setSourceLanguage, 0, 2);
-		root.add(sourceLanguageSelections, 1, 2, 4, 1);
-		root.addRow(3, selectTargetLanguages); 
-		root.add(selectedLanguages, 0, 4, 2, 3);
-		root.add(addTLanguage, 2, 4); 
-		root.add(removeSLanguage, 2, 5);
-		root.add(allLanguages, 3, 4, 1, 3);
-		root.add(aButtons, 4, 7);
+		center.add(projectName, 0, 0);
+		center.add(projectNameEntry, 1, 0, 4, 1); 
+		center.add(projectDir, 0, 1); 
+		center.add(projectDirEntry, 1, 1, 2, 1); 
+		center.add(projectDirBtn, 4, 1); 
+		center.add(setSourceLanguage, 0, 2);
+		center.add(sourceLanguageSelections, 1, 2, 4, 1);
+		center.add(specifyCountryInFilenames, 0, 3);
+		center.add(specifyCountryInFilenamesYes, 1, 3); 
+		center.add(specifyCountryInFilenamesNo, 2, 3);
+		center.addRow(4, selectTargetLanguages); 
+		center.add(selectedLanguages, 0, 5, 3, 3);
+		center.add(addTLanguage, 3, 5); 
+		center.add(removeSLanguage, 3, 6);
+		center.add(allLanguages, 4, 5, 1, 3);
 		
-		GridPane.setHgrow(aButtons, Priority.ALWAYS);
+		//center.setGridLinesVisible(true); 
+		
 		GridPane.setHgrow(selectedLanguages, Priority.ALWAYS); 
-		GridPane.setHgrow(projectDirEntry, Priority.NEVER); 
-		GridPane.setHalignment(aButtons, HPos.RIGHT); 
+		GridPane.setHgrow(projectDirEntry, Priority.ALWAYS);
+		GridPane.setHgrow(sourceLanguageSelections, Priority.ALWAYS); 
+		GridPane.setHgrow(allLanguages, Priority.ALWAYS); 
+		GridPane.setHgrow(specifyCountryInFilenamesNo, Priority.ALWAYS); 
+		GridPane.setHgrow(addTLanguage, Priority.NEVER); 
+		GridPane.setHgrow(removeSLanguage, Priority.NEVER); 
 		GridPane.setHalignment(projectDirBtn, HPos.RIGHT); 
 		
-		//root.setGridLinesVisible(true); 
+		root.setCenter(center); 
+		root.setBottom(aBtns); 
 		
 		scene = new Scene(root, 650, 350);
 		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/main/resources/appicon.png")));
 	    primaryStage.setScene(scene);
-	    primaryStage.setTitle("");
+	    primaryStage.setTitle(get("gui.main.newproject"));
 		primaryStage.initModality(Modality.APPLICATION_MODAL);
 		primaryStage.showAndWait(); 
-	    
+	}
+	
+	private void updateLanguages() {
+		selectedLanguages.getItems().clear(); 
+		
+		allLanguages.getItems().clear(); 
+		for (String locale : LocaleUtils.getAllLocaleNames(specifyCountryInFilenamesYes.isSelected())) {
+			allLanguages.getItems().add(locale); 
+		}
+		allLanguages.getItems().sort(null); 
+		
+		sourceLanguageSelections.getItems().clear(); 
+		for (String locale : LocaleUtils.getAllLocaleNames(specifyCountryInFilenamesYes.isSelected())) {
+			sourceLanguageSelections.getItems().add(locale); 
+		}
+		sourceLanguageSelections.getItems().sort(null); 
 	}
 	
 	private void save(Stage primaryStage) {
@@ -267,6 +330,8 @@ public class NewProject extends Application{
 			twoEArrays.put(new JSONArray()); 
 			
 			prjConfig.put("Custom File Formats", (new JSONArray()).put(new JSONArray()).put(new JSONArray())); 
+			
+			prjConfig.put("Specify Country in Filenames", specifyCountryInFilenamesYes.isSelected() ? true : false); 
 			
 			BufferedWriter writer = null;
 			try {

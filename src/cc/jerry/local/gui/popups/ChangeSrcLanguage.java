@@ -18,12 +18,11 @@ package cc.jerry.local.gui.popups;
 
 import static cc.jerry.commons.util.Localization.get;
 
-import java.util.Locale;
-
 import org.json.JSONObject;
 
 import cc.jerry.commons.javafx.ComboBoxWithSearchBar;
 import cc.jerry.local.gui.MainGUI;
+import cc.jerry.local.utils.LocaleUtils;
 import cc.jerry.local.utils.ProjectConfig;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -67,9 +66,8 @@ public class ChangeSrcLanguage extends Application {
 		root.setVgap(10); 
 		
 		languages = new ComboBoxWithSearchBar<String>(); 
-		for (Locale lang : Locale.getAvailableLocales()) 
-			if (lang.getDisplayName().contains("("))
-				languages.getItems().add(lang.getDisplayName()); 
+		for (String lang : LocaleUtils.getAllLocaleNames()) 
+			languages.getItems().add(lang); 
 		languages.getItems().sort(null); 
 		languages.getItems().remove(0); 
 		languages.getSelectionModel().select(ProjectConfig.json().getString("Src Language"));
