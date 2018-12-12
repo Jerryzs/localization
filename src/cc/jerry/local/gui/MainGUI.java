@@ -23,6 +23,7 @@ import java.util.Calendar;
 
 import org.json.JSONObject;
 
+import cc.jerry.commons.util.Localization;
 import cc.jerry.commons.util.OS;
 import cc.jerry.commons.util.OS.SystemType;
 import cc.jerry.local.gui.editor.Editor;
@@ -31,6 +32,7 @@ import cc.jerry.local.gui.popups.AddTargetLanguage;
 import cc.jerry.local.gui.popups.ChangeSrcLanguage;
 import cc.jerry.local.gui.popups.RemoveConfirmation;
 import cc.jerry.local.gui.popups.Rename;
+import cc.jerry.local.gui.popups.WaitForLangInit;
 import cc.jerry.local.utils.ProjectConfig;
 import cc.jerry.local.utils.References;
 import de.codecentric.centerdevice.MenuToolkit;
@@ -180,7 +182,10 @@ public class MainGUI extends Application {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				(new Settings()).start(new Stage()); 
+				if (Localization.listFolderThread.isAlive())
+					(new WaitForLangInit()).start(new Stage()); 
+				else 
+					(new Settings()).start(new Stage()); 
 			}
 			
 		});
