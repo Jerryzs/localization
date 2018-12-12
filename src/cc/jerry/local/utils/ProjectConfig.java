@@ -23,6 +23,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,7 +64,25 @@ public class ProjectConfig {
 		        }
 		        
 		        reader.close(); 
+		        
 		        config = new JSONObject(sb.toString()); 
+		        
+		        if (!config.has("Project Name") || !config.has("Directory") 
+		        		|| !config.has("Src Language") || !config.has("Keys")
+		        		|| !config.has("Strings") || !config.has("Target Languages"))
+		        	throw new JSONException("File is invalid"); 
+				if (!config.has("Custom File Formats"))
+					config.put("Custom File Formats", (new JSONArray()).put(new JSONArray()).put(new JSONArray())); 
+				if (!config.has("Specify Country in Filenames")) 
+					config.put("Specify Country in Filenames", true); 
+				
+				if (!config.getString("Project Name").equals(FilenameUtils.removeExtension(file.getName())))
+					config.put("Project Name", FilenameUtils.removeExtension(file.getName())); 
+				String parentPath = file.getParent().endsWith(File.separator) ? file.getParent() : file.getParent() + File.separator; 
+				if (!config.getString("Directory").equals(parentPath))
+					config.put("Directory", parentPath); 
+				
+				ProjectConfig.write(config); 
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			} catch (JSONException je) {
