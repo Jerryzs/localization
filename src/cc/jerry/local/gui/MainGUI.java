@@ -376,8 +376,8 @@ public class MainGUI extends Application {
 					ChangeSrcLanguage.closed = false; 
 				}
 				if (Settings.closed) {
-					(new MainGUI()).start(primaryStage); 
 					Settings.closed = false; 
+					(new MainGUI()).start(primaryStage); 
 				}
 			}
 	    	
