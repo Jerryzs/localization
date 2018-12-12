@@ -17,12 +17,14 @@
         <pathelement location="../../../../../../Program Files/Java/jdk1.8.0_181/jre/lib/ext/jfxrt.jar"/>
         <pathelement location="lib/commons-compress-1.16.1.jar"/>
         <pathelement location="lib/commons-lang3-3.8.1.jar"/>
-        <pathelement location="lib/Jerry's Java Commons v0.2b.jar"/>
+        <pathelement location="lib/Jerry's Java Commons v0.2.1b.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.xtend"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
