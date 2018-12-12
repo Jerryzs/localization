@@ -28,6 +28,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Localization%20Organizer/lib/commons-lang3-3.8.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/Jerry&apos;s Java Commons v0.2b.jar"/>
+	<classpathentry kind="lib" path="lib/Jerry&apos;s Java Commons v0.2.1b.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
