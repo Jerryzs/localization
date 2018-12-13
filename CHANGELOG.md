@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.2 Beta
+
+## Fixed
+- Fixed thread not interrupted after "Wait For Application to Initialize" window is closed. 
+- Fixed project configuration file reader is not closed after application settings changed. 
+
 ## v0.6.1 Beta
 
 ## Changed & Improved
