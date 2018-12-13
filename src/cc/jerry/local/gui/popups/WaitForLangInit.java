@@ -48,13 +48,49 @@ public class WaitForLangInit {
 	Font labelsFont = MainGUI.labelsFont; 
 	
 	public void start(Stage primaryStage) {
+		root = new BorderPane(); 
+		root.setPadding(new Insets(10));
+		
+		message = new Label(get("gui.message.pleasewaitforinit")); 
+		message.setFont(labelsFont); 
+		
+		root.setCenter(message); 
+		BorderPane.setAlignment(message, Pos.TOP_LEFT); 
+		
+		cancel = new Button(get("gui.label.comebacklater")); 
+		cancel.setFont(labelsFont); 
+		cancel.setCancelButton(true); 
+		cancel.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				primaryStage.close(); 
+			}
+		});
+		
+		root.setBottom(cancel); 
+		BorderPane.setAlignment(cancel, Pos.CENTER_RIGHT); 
+		
+		scene = new Scene(root, 500, 85); 
+		primaryStage.setScene(scene); 
+		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/main/resources/appicon.png")));
+		primaryStage.setTitle(get("gui.main.message")); 
+		primaryStage.initModality(Modality.APPLICATION_MODAL);
+		primaryStage.show(); 
+		
 		Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				System.out.println("Thread Started: " + Thread.currentThread().getName()); 
 				
-				while (Localization.listFolderThread.isAlive()); 
+				while (Localization.listFolderThread.isAlive()) {
+					if (!primaryStage.isShowing()) {
+						System.out.println("Thread Ended: " + Thread.currentThread().getName()); 
+						return; 
+					}
+				}; 
+				
 				Platform.runLater(new Runnable() {
 
 					@Override
@@ -72,37 +108,5 @@ public class WaitForLangInit {
 		}); 
 		
 		t.start(); 
-		
-		root = new BorderPane(); 
-		root.setPadding(new Insets(10));
-		
-		message = new Label(get("gui.message.pleasewaitforinit")); 
-		message.setFont(labelsFont); 
-		
-		root.setCenter(message); 
-		BorderPane.setAlignment(message, Pos.TOP_LEFT); 
-		
-		cancel = new Button(get("gui.label.comebacklater")); 
-		cancel.setFont(labelsFont); 
-		cancel.setCancelButton(true); 
-		cancel.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent arg0) {
-				System.out.println("Thread Interrupted: " + t.getName()); 
-				t.interrupt(); 
-				primaryStage.close(); 
-			}
-		});
-		
-		root.setBottom(cancel); 
-		BorderPane.setAlignment(cancel, Pos.CENTER_RIGHT); 
-		
-		scene = new Scene(root, 500, 85); 
-		primaryStage.setScene(scene); 
-		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/main/resources/appicon.png")));
-		primaryStage.setTitle(get("gui.main.message")); 
-		primaryStage.initModality(Modality.APPLICATION_MODAL);
-		primaryStage.showAndWait(); 
 	}
 }
