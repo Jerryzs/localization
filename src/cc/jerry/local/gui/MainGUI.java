@@ -382,6 +382,7 @@ public class MainGUI extends Application {
 				}
 				if (Settings.closed) {
 					Settings.closed = false; 
+					ProjectConfig.closeReader(); 
 					(new MainGUI()).start(primaryStage); 
 				}
 			}

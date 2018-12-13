@@ -56,7 +56,7 @@ public class ProjectConfig {
 		if (file.exists()) { 
 			System.out.println(file.getAbsolutePath()); 
 			try {
-				if (reader != null) reader.close(); 
+				ProjectConfig.closeReader(); 
 				reader = new BufferedReader(new FileReader(file)); 
 				
 				StringBuilder sb = new StringBuilder();
@@ -91,6 +91,15 @@ public class ProjectConfig {
 			}
 		}
 		
+	}
+	
+	public static void closeReader() {
+		if (reader != null)
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 	}
 	
 	public static JSONObject json() {
