@@ -48,7 +48,6 @@ public class AppConfig {
 		}
 		
 		config.put("language", "System Default"); 
-		config.put("specifycountryinfilenames", "true"); 
 		
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
 			config.store(writer, null); 
