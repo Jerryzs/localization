@@ -12,3 +12,23 @@ If you'd like to contribute to this project, please follow these requirements:
 * Use this Integrated Development Environment (IDE): **Eclipse Java IDE** *([Oxygen 3a](https://www.eclipse.org/downloads/packages/release/oxygen/3a/eclipse-ide-java-developers) is recommended)*
 * Use this version of Java Development Kit (JDK): **JDK 1.8**
 
+## Exporting Files
+### Java Properties File
+**Example:**
+*en_US.properties* (filenames and extensions can all be changed)
+```Properties
+this.is.key.one=Translation
+this.is.key.two=Translation
+...
+```
+### JavaScript Object Notation (JSON)
+**Example:**
+*en_US.json* (filenames and extensions can all be changed)
+```JSON
+{
+  "this.is.key.one": "Translation", 
+  "this.is.key.two": "Translation"
+}
+```
+### Customized File Format
+*Comming Soon*
