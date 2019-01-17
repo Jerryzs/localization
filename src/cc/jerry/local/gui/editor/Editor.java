@@ -18,18 +18,21 @@ package cc.jerry.local.gui.editor;
 
 import static cc.jerry.commons.util.Localization.get;
 
+import java.util.Iterator;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
 
+import cc.jerry.commons.javafx.ComboBoxWithSearchBar;
 import cc.jerry.local.gui.MainGUI;
 import cc.jerry.local.gui.popups.RemoveConfirmation;
 import cc.jerry.local.utils.ProjectConfig;
-import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -41,23 +44,36 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 @SuppressWarnings("deprecation")
-public class Editor extends Application{
+public class Editor {
 	//--------------------
 	Scene scene; 
 	BorderPane root; 
+	VBox center; 
 	GridPane editorCont; 
-	GridPane stringListCont; 
+	GridPane stringsCont; 
+	
+	HBox folderContainer; 
+	
+	Label folder; 
+	ComboBoxWithSearchBar<String> folderList; 
+	
+	HBox folderBtns; 
+	Button addFolder; 
+	Button removeFolder; 
+	Button editFolder; 
 	
 	Label strings; 
 	ListView<String> stringList = new ListView<String>(); 
@@ -66,6 +82,7 @@ public class Editor extends Application{
 	Button addString; 
 	Button removeString; 
 	Button editString; 
+	Button moveString; 
 	
 	CheckBox notTranslatedFirst; 
 	
@@ -83,7 +100,7 @@ public class Editor extends Application{
 	
 	HBox aBtns; 
 	Button save; 
-	Button cancel; 
+	Button close; 
 	//--------------------
 	
 	static JSONObject prjConfig; 
@@ -93,6 +110,8 @@ public class Editor extends Application{
 	static int stringsCount; 
 	static int stringsTranslated; 
 	static int stringsNotTranslated; 
+	
+	static int remove = -1; 
 	
 	Font labelsFont = MainGUI.labelsFont;
 	
@@ -112,43 +131,131 @@ public class Editor extends Application{
 		editorCont.setHgap(10); 
 		editorCont.setVgap(10); 
 		
-		stringListCont = new GridPane(); 
-		stringListCont.setPadding(new Insets(10)); 
-		stringListCont.setHgap(10); 
-		stringListCont.setVgap(10); 
+		stringsCont = new GridPane(); 
+		stringsCont.setPadding(new Insets(10)); 
+		stringsCont.setHgap(10); 
+		stringsCont.setVgap(10); 
+		
+		folderContainer = new HBox(); 
+		folderContainer.setPadding(new Insets(10)); 
+		folderContainer.setAlignment(Pos.CENTER_LEFT); 
+		folderContainer.setSpacing(10); 
+		
+		folder = new Label(get("gui.label.folder")); 
+		folder.setFont(labelsFont);
+		
+		folderList = new ComboBoxWithSearchBar<String>(); 
+		reloadFolders(); 
+		folderList.getSelectionModel().select(0); 
+		folderList.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.ENTER) {
+					if (folderList.getSelectedItem().equals(get("gui.text.all")) || folderList.getSelectedItem().equals(get("gui.text.unclassified"))) {
+						editFolder.setDisable(true); 
+						removeFolder.setDisable(true); 
+					}
+					else {
+						editFolder.setDisable(false); 
+						removeFolder.setDisable(false); 
+					}
+					reload(); 
+					sortListToNTF(); 
+				}
+			}
+			
+		});
+		folderList.setOnHidden(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				if (folderList.getSelectedItem() != null) {
+					if (folderList.getSelectedItem().equals(get("gui.text.all")) || folderList.getSelectedItem().equals(get("gui.text.unclassified"))) {
+						editFolder.setDisable(true); 
+						removeFolder.setDisable(true); 
+					}
+					else {
+						editFolder.setDisable(false); 
+						removeFolder.setDisable(false); 
+					}
+					reload(); 
+					sortListToNTF(); 
+				}
+			}
+			
+		}); 
+		
+		folderBtns = new HBox(); 
+		folderBtns.setSpacing(10); 
+		
+		addFolder = new Button(get("gui.label.add")); 
+		addFolder.setFont(labelsFont);
+		addFolder.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				(new AddFolder()).start(new Stage()); 
+			}
+			
+		});
+		
+		removeFolder = new Button(get("gui.label.remove")); 
+		removeFolder.setFont(labelsFont);
+		removeFolder.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				remove = 1; 
+				(new RemoveConfirmation()).start(new Stage()); 
+			}
+			
+		});
+		
+		editFolder = new Button(get("gui.label.edit")); 
+		editFolder.setFont(labelsFont); 
+		editFolder.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				EditFolder.setFolder(folderList.getSelectedItem()); 
+				(new EditFolder()).start(new Stage()); 
+			}
+			
+		});
+
+		editFolder.setDisable(true); 
+		removeFolder.setDisable(true); 
+		
+		folderBtns.getChildren().addAll(addFolder, editFolder, removeFolder); 
+		
+		folderContainer.getChildren().addAll(folder, folderList, folderBtns); 
+		
+		HBox.setHgrow(folderBtns, Priority.ALWAYS); 
+		
+		center = new VBox(); 
 		
 		strings = new Label(get("gui.label.strings")); 
 		strings.setFont(labelsFont); 
-		
-		for (int i = 0; i < prjConfig.getJSONArray("Keys").length(); i++) {
-			if (!prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(i).equals("")) {
-				stringList.getItems().add("\u2713 " + (i + 1) + ". " + prjConfig.getJSONArray("Keys").getString(i) + " | " + prjConfig.getJSONArray("Strings").getString(i)); 
-				stringsTranslated++; 
-			}
-			else {
-				stringList.getItems().add("\u2717 " + (i + 1) + ". " + prjConfig.getJSONArray("Keys").getString(i) + " | " + prjConfig.getJSONArray("Strings").getString(i)); 
-				stringsNotTranslated++; 
-			}
-			stringsCount++; 
-		}
 		
 		stringList.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
-				if (!stringList.getSelectionModel().isEmpty()) {
-					keyEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(". ") + 2, stringList.getSelectionModel().getSelectedItem().indexOf(" | ")));
-					stringEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(" | ") + 3, stringList.getSelectionModel().getSelectedItem().length()));
-					
-					if (stringList.getSelectionModel().getSelectedItem().contains("\u2713"))
-						translateEntry.setText(StringEscapeUtils.unescapeJava(prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1)));
-					else {
-						translateEntry.setText(translateSave); 
-					}
-				}
+				reloadEditor(); 
 			}
 			
 		});;
+		stringList.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN) {
+					reloadEditor(); 
+				}
+			}
+			
+		});
 		
 		stringsCountLabel = new Label(get("gui.label.total") + stringsCount); 
 		stringsCountLabel.setFont(labelsFont); 	
@@ -168,6 +275,7 @@ public class Editor extends Application{
 
 			@Override
 			public void handle(ActionEvent event) {
+				NewString.setFolder(folderList.getSelectedItem());
 				(new NewString()).start(new Stage());
 			}
 			
@@ -180,6 +288,7 @@ public class Editor extends Application{
 			@Override
 			public void handle(ActionEvent event) {
 				if (!stringList.getSelectionModel().isEmpty()) {
+					remove = 0; 
 					(new RemoveConfirmation()).start(new Stage()); 
 				}
 			}
@@ -203,7 +312,21 @@ public class Editor extends Application{
 			
 		});
 		
-		stringBtns.getChildren().addAll(editString, addString, removeString); 
+		moveString = new Button(get("gui.label.move")); 
+		moveString.setFont(labelsFont);
+		moveString.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if (!stringList.getSelectionModel().isEmpty()) {
+					MoveString.setIndex(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1); 
+					(new MoveString()).start(new Stage()); 
+				}
+			}
+			
+		});
+		
+		stringBtns.getChildren().addAll(addString, moveString, editString, removeString); 
 		stringBtns.setAlignment(Pos.CENTER_RIGHT); 
 		
 		notTranslatedFirst = new CheckBox(get("gui.label.shownottranslatedstringsfirst")); 
@@ -213,35 +336,10 @@ public class Editor extends Application{
 			@Override
 			public void handle(ActionEvent event) {
 				if (notTranslatedFirst.isSelected()) {
-					ObservableList<String> list = FXCollections.observableArrayList(); 
-					
-					for (String item : stringList.getItems()) {
-						if (item.contains("\u2717")) {
-							list.add(item); 
-						}
-					}
-					for (String item : stringList.getItems()) {
-						if (item.contains("\u2713")) {
-							list.add(item); 
-						}
-					}
-					
-					stringList.setItems(list);
+					sortListToNTF(); 
 				}
-				else {
-					ObservableList<String> list = FXCollections.observableArrayList(); 
-					
-					for (int i = 0; i < stringList.getItems().size(); i++) {
-						for (String item : stringList.getItems()) {
-							if (item.startsWith(Integer.toString((i + 1)), 2)) {
-								list.add(item); 
-								break; 
-							}
-						}
-					}
-					
-					stringList.setItems(list);  
-				}
+				else 
+					reload(); 
 			}
 			
 		});
@@ -289,7 +387,7 @@ public class Editor extends Application{
 						stringEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(" | ") + 3, stringList.getSelectionModel().getSelectedItem().length()));
 						
 						if (stringList.getSelectionModel().getSelectedItem().contains("\u2713"))
-							translateEntry.setText(prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1));
+							translateEntry.setText(StringEscapeUtils.unescapeJava(prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1)));
 						else {
 							translateEntry.setText(translateSave); 
 						}
@@ -299,10 +397,10 @@ public class Editor extends Application{
 			
 		});
 		
-		cancel = new Button(get("gui.label.close")); 
-		cancel.setFont(labelsFont); 
-		cancel.setCancelButton(true); 
-		cancel.setOnAction(new EventHandler<ActionEvent>() {
+		close = new Button(get("gui.label.close")); 
+		close.setFont(labelsFont); 
+		close.setCancelButton(true); 
+		close.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
@@ -312,7 +410,7 @@ public class Editor extends Application{
 		});
 		
 		aBtns = new HBox(); 
-		aBtns.getChildren().add(cancel); 
+		aBtns.getChildren().add(close); 
 		aBtns.getChildren().add(save); 
 		aBtns.setSpacing(10); 
 		aBtns.setPadding(new Insets(10)); 
@@ -324,29 +422,39 @@ public class Editor extends Application{
 		editorCont.add(stringEntry, 1, 1); 
 		editorCont.add(translate, 0, 2); 
 		editorCont.add(translateEntry, 0, 3, 2, 1); 
-		
-		stringListCont.add(strings, 0, 0);
-		stringListCont.add(stringBtns, 1, 0, 2, 1); 
-		stringListCont.add(stringList, 0, 1, 3, 1); 
-		stringListCont.add(notTranslatedFirst, 0, 2, 3, 1);
-		stringListCont.add(stringsCountLabel, 0, 3); 
-		stringListCont.add(stringsTranslatedLabel, 1, 3); 
-		stringListCont.add(stringsNotTranslatedLabel, 2, 3); 
-		
+
+		stringsCont.add(strings, 0, 0);
+		stringsCont.add(stringBtns, 1, 0, 2, 1); 
+		stringsCont.add(stringList, 0, 1, 3, 1); 
+		stringsCont.add(notTranslatedFirst, 0, 2, 3, 1);
+		stringsCont.add(stringsCountLabel, 0, 3); 
+		stringsCont.add(stringsTranslatedLabel, 1, 3); 
+		stringsCont.add(stringsNotTranslatedLabel, 2, 3); 
+
+		GridPane.setHgrow(strings, Priority.ALWAYS);  
+		GridPane.setHgrow(stringBtns, Priority.ALWAYS);
 		GridPane.setHgrow(stringList, Priority.ALWAYS); 
-		GridPane.setHgrow(strings, Priority.ALWAYS); 
 		GridPane.setHgrow(notTranslatedFirst, Priority.ALWAYS);
 		GridPane.setHgrow(stringsCountLabel, Priority.ALWAYS); 
 		GridPane.setHgrow(stringsTranslatedLabel, Priority.ALWAYS); 
-		GridPane.setHgrow(stringsNotTranslatedLabel, Priority.ALWAYS); 
-		GridPane.setHgrow(stringBtns, Priority.ALWAYS);
+		GridPane.setHgrow(stringsNotTranslatedLabel, Priority.ALWAYS);
+		GridPane.setHgrow(stringEntry, Priority.ALWAYS);
+		GridPane.setHgrow(keyEntry, Priority.ALWAYS); 
+		GridPane.setHgrow(translateEntry, Priority.ALWAYS); 
 		GridPane.setHalignment(notTranslatedFirst, HPos.RIGHT);	
 		
-		root.setLeft(stringListCont); 
-		root.setCenter(editorCont); 
+		center.getChildren().addAll(stringsCont, editorCont); 
+		
+		HBox.setHgrow(stringsCont, Priority.ALWAYS); 
+		HBox.setHgrow(editorCont, Priority.ALWAYS); 
+		
+		root.setTop(folderContainer); 
+		root.setCenter(center); 
 		root.setBottom(aBtns);
 		
-		scene = new Scene(root, 650, 350);
+		reload(); 
+		
+		scene = new Scene(root, 650, 750);
 	    primaryStage.setScene(scene);
 		primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/main/resources/appicon.png")));
 	    primaryStage.setTitle(get("gui.main.editor"));
@@ -358,7 +466,7 @@ public class Editor extends Application{
 				prjConfig = ProjectConfig.json(); 
 				
 				if (NewString.saveClicked) {
-					stringList.getItems().add("\u2717 " + (stringList.getItems().size() + 1) + ". " + prjConfig.getJSONArray("Keys").getString(prjConfig.getJSONArray("Keys").length() - 1) + " | " + prjConfig.getJSONArray("Strings").getString((prjConfig.getJSONArray("Strings").length() - 1))); 
+					stringList.getItems().add("\u2717 " + prjConfig.getJSONArray("Keys").length() + ". " + prjConfig.getJSONArray("Keys").getString(prjConfig.getJSONArray("Keys").length() - 1) + " | " + StringEscapeUtils.unescapeJava(prjConfig.getJSONArray("Strings").getString((prjConfig.getJSONArray("Strings").length() - 1)))); 
 					stringsNotTranslated++; 
 					stringsCount++; 
 					
@@ -370,54 +478,59 @@ public class Editor extends Application{
 				}
 				
 				if (RemoveConfirmation.removeConfirmed) {
-					int index = Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1; 
-					int listItemIndex = stringList.getSelectionModel().getSelectedIndex(); 
-					
-					prjConfig.getJSONArray("Keys").remove(index); 
-					prjConfig.getJSONArray("Strings").remove(index); 
-					
-					for (String key : prjConfig.getJSONObject("Target Languages").keySet().toArray(new String[prjConfig.getJSONObject("Target Languages").keySet().size()])) {
-						prjConfig.getJSONObject("Target Languages").getJSONArray(key).remove(index);  
-					}
-					
-					ProjectConfig.write(prjConfig); 
-					
-					stringList.getItems().clear(); 
-					stringsCount = 0; 
-					stringsTranslated = 0; 
-					stringsNotTranslated = 0; 
-					for (int i = 0; i < prjConfig.getJSONArray("Keys").length(); i++) {
-						if (!prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(i).equals("")) {
-							stringList.getItems().add("\u2713 " + (i + 1) + ". " + prjConfig.getJSONArray("Keys").getString(i) + " | " + prjConfig.getJSONArray("Strings").getString(i)); 
-							stringsTranslated++; 
-						}
-						else {
-							stringList.getItems().add("\u2717 " + (i + 1) + ". " + prjConfig.getJSONArray("Keys").getString(i) + " | " + prjConfig.getJSONArray("Strings").getString(i)); 
-							stringsNotTranslated++; 
-						}
-						stringsCount++; 
-					}
-
-					stringsCountLabel.setText(get("gui.label.total") + stringsCount); 
-					stringsTranslatedLabel.setText(get("gui.label.translated") + stringsTranslated); 
-					stringsNotTranslatedLabel.setText(get("gui.label.nottranslated") + stringsNotTranslated); 
-					
-					stringList.getSelectionModel().select(listItemIndex);
-					
-					if (!stringList.getSelectionModel().isEmpty()) {
-						keyEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(". ") + 2, stringList.getSelectionModel().getSelectedItem().indexOf(" | ")));
-						stringEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(" | ") + 3, stringList.getSelectionModel().getSelectedItem().length()));
+					if (remove == 0) {
+						int index = Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1; 
+						int listItemIndex = stringList.getSelectionModel().getSelectedIndex(); 
 						
-						if (stringList.getSelectionModel().getSelectedItem().contains("\u2713"))
-							translateEntry.setText(prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1));
-						else {
-							translateEntry.setText(translateSave); 
+						prjConfig.getJSONArray("Keys").remove(index); 
+						prjConfig.getJSONArray("Strings").remove(index); 
+						prjConfig.getJSONArray("Class").remove(index); 
+						
+						for (String key : prjConfig.getJSONObject("Target Languages").keySet().toArray(new String[prjConfig.getJSONObject("Target Languages").keySet().size()])) {
+							prjConfig.getJSONObject("Target Languages").getJSONArray(key).remove(index);  
 						}
+						
+						ProjectConfig.write(prjConfig); 
+						
+						reload(); 
+						
+						stringList.getSelectionModel().select(listItemIndex);
+						
+						if (!stringList.getSelectionModel().isEmpty()) {
+							keyEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(". ") + 2, stringList.getSelectionModel().getSelectedItem().indexOf(" | ")));
+							stringEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(" | ") + 3, stringList.getSelectionModel().getSelectedItem().length()));
+							
+							if (stringList.getSelectionModel().getSelectedItem().contains("\u2713"))
+								translateEntry.setText(StringEscapeUtils.unescapeJava(prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1)));
+							else {
+								translateEntry.setText(translateSave); 
+							}
+						}
+						
+						else {
+							keyEntry.setText("null"); 
+							stringEntry.setText("null"); 
+						}
+						
+						remove = -1; 
 					}
 					
-					else {
-						keyEntry.setText("null"); 
-						stringEntry.setText("null"); 
+					if (remove == 1) {
+						int index = prjConfig.getJSONArray("Folders").toList().indexOf(folderList.getSelectedItem()); 
+						int listIndex = folderList.getSelectionModel().getSelectedIndex(); 
+						
+						for (int i = 0; i < prjConfig.getJSONArray("Class").length(); i++) {
+							if (prjConfig.getJSONArray("Class").getInt(i) == index)
+								prjConfig.getJSONArray("Class").put(i, -1); 
+						}
+						
+						prjConfig.getJSONArray("Folders").remove(index); 
+						ProjectConfig.write(prjConfig); 
+						
+						reloadFolders(); 
+						folderList.getSelectionModel().select(listIndex - 1); 
+						reload(); 
+						remove = -1; 
 					}
 					
 					RemoveConfirmation.removeConfirmed = false; 
@@ -426,30 +539,32 @@ public class Editor extends Application{
 				if (EditString.saveClicked) {
 					int listItemIndex = stringList.getSelectionModel().getSelectedIndex(); 
 					
-					stringList.getItems().clear(); 
-					for (int i = 0; i < prjConfig.getJSONArray("Keys").length(); i++) {
-						if (!prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(i).equals("")) {
-							stringList.getItems().add("\u2713 " + (i + 1) + ". " + prjConfig.getJSONArray("Keys").getString(i) + " | " + prjConfig.getJSONArray("Strings").getString(i)); 
-							stringsTranslated++; 
-						}
-						else {
-							stringList.getItems().add("\u2717 " + (i + 1) + ". " + prjConfig.getJSONArray("Keys").getString(i) + " | " + prjConfig.getJSONArray("Strings").getString(i)); 
-							stringsNotTranslated++; 
-						}
-						stringsCount++; 
-					}
+					reload(); 
 					
 					stringList.getSelectionModel().select(listItemIndex); 
 					keyEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(". ") + 2, stringList.getSelectionModel().getSelectedItem().indexOf(" | ")));
 					stringEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(" | ") + 3, stringList.getSelectionModel().getSelectedItem().length()));
 					
 					if (stringList.getSelectionModel().getSelectedItem().contains("\u2713"))
-						translateEntry.setText(prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1));
+						translateEntry.setText(StringEscapeUtils.unescapeJava(prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1)));
 					else {
 						translateEntry.setText(translateSave); 
 					}
 					
 					EditString.saveClicked = false; 
+				}
+				
+				if (MoveString.saveClicked) {
+					reload(); 
+					MoveString.saveClicked = false; 
+				}
+				
+				if (AddFolder.saveClicked || EditFolder.saveClicked) {
+					int index = folderList.getSelectionModel().getSelectedIndex(); 
+					reloadFolders(); 
+					folderList.getSelectionModel().select(index); 
+					AddFolder.saveClicked = false; 
+					EditFolder.saveClicked = false; 
 				}
 			}
 	    	
@@ -462,13 +577,15 @@ public class Editor extends Application{
 	private void save() {
 		prjConfig = ProjectConfig.json(); 
 		
+		int index = Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1;
+		
 		String entry = ""; 
 		
 		for (char c : translateEntry.getText().toCharArray()) {
 			entry += "\\u" + Integer.toHexString(c | 0x10000).substring(1); 
 		}
 		
-		prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).put(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1, entry); 
+		prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).put(index, entry); 
 		
 		ProjectConfig.write(prjConfig); 
 		
@@ -480,7 +597,7 @@ public class Editor extends Application{
 				stringsNotTranslated--; 
 			}
 			
-			stringList.getItems().set(stringList.getSelectionModel().getSelectedIndex(), "\u2713 " + (stringList.getSelectionModel().getSelectedIndex() + 1) + ". " + prjConfig.getJSONArray("Keys").getString(stringList.getSelectionModel().getSelectedIndex()) + " | " + prjConfig.getJSONArray("Strings").getString(stringList.getSelectionModel().getSelectedIndex())); 
+			stringList.getItems().set(stringList.getSelectionModel().getSelectedIndex(), "\u2713 " + (index + 1) + ". " + prjConfig.getJSONArray("Keys").getString(index) + " | " + StringEscapeUtils.unescapeJava(prjConfig.getJSONArray("Strings").getString(index))); 
 		}
 		else {
 			if (stringList.getSelectionModel().getSelectedItem().contains("\u2713")) { 
@@ -488,7 +605,7 @@ public class Editor extends Application{
 				stringsNotTranslated++;
 			}
 			
-			stringList.getItems().set(stringList.getSelectionModel().getSelectedIndex(), "\u2717 " + (stringList.getSelectionModel().getSelectedIndex() + 1) + ". " + prjConfig.getJSONArray("Keys").getString(stringList.getSelectionModel().getSelectedIndex()) + " | " + prjConfig.getJSONArray("Strings").getString(stringList.getSelectionModel().getSelectedIndex())); 
+			stringList.getItems().set(stringList.getSelectionModel().getSelectedIndex(), "\u2717 " + (index + 1) + ". " + prjConfig.getJSONArray("Keys").getString(index) + " | " + StringEscapeUtils.unescapeJava(prjConfig.getJSONArray("Strings").getString(index))); 
 		}
 		
 		stringsCountLabel.setText(get("gui.label.total") + stringsCount); 
@@ -498,4 +615,72 @@ public class Editor extends Application{
 		//System.out.println("Success!"); 
 	}
 	
+	private void reload() {
+		stringList.getItems().clear(); 
+		stringsCount = 0; 
+		stringsTranslated = 0; 
+		stringsNotTranslated = 0; 
+		
+		for (int i = 0; i < prjConfig.getJSONArray("Keys").length(); i++) {
+				if (!folderList.getSelectedItem().equals(get("gui.text.all"))) 
+					if (prjConfig.getJSONArray("Class").getInt(i) != prjConfig.getJSONArray("Folders").toList().indexOf(folderList.getSelectedItem()))
+						continue; 
+			
+			if (!prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(i).equals("")) {
+				stringList.getItems().add("\u2713 " + (i + 1) + ". " + prjConfig.getJSONArray("Keys").getString(i) + " | " + StringEscapeUtils.unescapeJava(prjConfig.getJSONArray("Strings").getString(i))); 
+				stringsTranslated++; 
+			}
+			else {
+				stringList.getItems().add("\u2717 " + (i + 1) + ". " + prjConfig.getJSONArray("Keys").getString(i) + " | " + StringEscapeUtils.unescapeJava(prjConfig.getJSONArray("Strings").getString(i))); 
+				stringsNotTranslated++; 
+			}
+			stringsCount++; 
+		}
+		
+		stringsCountLabel.setText(get("gui.label.total") + stringsCount); 
+		stringsTranslatedLabel.setText(get("gui.label.translated") + stringsTranslated); 
+		stringsNotTranslatedLabel.setText(get("gui.label.nottranslated") + stringsNotTranslated); 
+	}
+	
+	private void reloadFolders() {
+		folderList.getItems().clear(); 
+		
+		folderList.getItems().add(get("gui.text.all")); 
+		folderList.getItems().add(get("gui.text.unclassified")); 
+		
+		Iterator<Object> foldersIterator = prjConfig.getJSONArray("Folders").iterator(); 
+		
+		while (foldersIterator.hasNext())
+			folderList.getItems().add((String) foldersIterator.next()); 
+	}
+	
+	private void reloadEditor() {
+		if (!stringList.getSelectionModel().isEmpty()) {
+			keyEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(". ") + 2, stringList.getSelectionModel().getSelectedItem().indexOf(" | ")));
+			stringEntry.setText(stringList.getSelectionModel().getSelectedItem().substring(stringList.getSelectionModel().getSelectedItem().indexOf(" | ") + 3, stringList.getSelectionModel().getSelectedItem().length()));
+			
+			if (stringList.getSelectionModel().getSelectedItem().contains("\u2713"))
+				translateEntry.setText(StringEscapeUtils.unescapeJava(prjConfig.getJSONObject("Target Languages").getJSONArray(tarLang).getString(Integer.parseInt(stringList.getSelectionModel().getSelectedItem().substring(2, stringList.getSelectionModel().getSelectedItem().indexOf(". "))) - 1)));
+			else {
+				translateEntry.setText(translateSave); 
+			}
+		}
+	}
+	
+	private void sortListToNTF() {
+		ObservableList<String> list = FXCollections.observableArrayList(); 
+		
+		for (String item : stringList.getItems()) {
+			if (item.contains("\u2717")) {
+				list.add(item); 
+			}
+		}
+		for (String item : stringList.getItems()) {
+			if (item.contains("\u2713")) {
+				list.add(item); 
+			}
+		}
+		
+		stringList.setItems(list);
+	}
 }

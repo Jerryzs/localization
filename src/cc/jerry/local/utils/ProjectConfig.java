@@ -69,12 +69,22 @@ public class ProjectConfig {
 		        
 		        if (!config.has("Project Name") || !config.has("Directory") 
 		        		|| !config.has("Src Language") || !config.has("Keys")
-		        		|| !config.has("Strings") || !config.has("Target Languages"))
+		        		|| !config.has("Strings") || !config.has("Target Languages")
+		        		|| config.getJSONArray("Strings").length() != config.getJSONArray("Keys").length())
 		        	throw new JSONException("File is invalid"); 
 				if (!config.has("Custom File Formats"))
 					config.put("Custom File Formats", (new JSONArray()).put(new JSONArray()).put(new JSONArray())); 
 				if (!config.has("Specify Country in Filenames")) 
 					config.put("Specify Country in Filenames", true); 
+				if (!config.has("Folders"))
+					config.put("Folders", new JSONArray()); 
+				
+				if (!config.has("Class")) {
+					JSONArray arr = new JSONArray(); 
+					for (int i = 0; i < config.getJSONArray("Strings").length(); i++)
+						arr.put(-1); 
+					config.put("Class", arr); 
+				}
 				
 				if (!config.getString("Project Name").equals(FilenameUtils.removeExtension(file.getName())))
 					config.put("Project Name", FilenameUtils.removeExtension(file.getName())); 

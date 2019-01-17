@@ -22,7 +22,6 @@ import org.json.JSONObject;
 
 import cc.jerry.local.gui.MainGUI;
 import cc.jerry.local.utils.ProjectConfig;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -39,7 +38,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class NewString extends Application {
+public class NewString {
 	//--------------------
 	Scene scene; 
 	GridPane root; 
@@ -60,6 +59,8 @@ public class NewString extends Application {
 	static Font labelsFont = MainGUI.labelsFont; 
 	
 	static boolean saveClicked = false; 
+	
+	private static String folder; 
 	
 	public void start(Stage primaryStage) {
 		saveClicked = false; 
@@ -101,19 +102,28 @@ public class NewString extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				prjConfig = ProjectConfig.json(); 
-				
-				prjConfig.getJSONArray("Keys").put(keyEntry.getText()); 
-				prjConfig.getJSONArray("Strings").put(stringEntry.getText()); 
-				
-				for (String key : prjConfig.getJSONObject("Target Languages").keySet().toArray(new String[prjConfig.getJSONObject("Target Languages").keySet().size()])) {
-						prjConfig.getJSONObject("Target Languages").getJSONArray(key).put(""); 
+				if (!keyEntry.getText().contains("|")) {
+					prjConfig = ProjectConfig.json(); 
+					
+					String entry = ""; 
+					
+					for (char c : stringEntry.getText().toCharArray()) {
+						entry += "\\u" + Integer.toHexString(c | 0x10000).substring(1); 
+					}
+					
+					prjConfig.getJSONArray("Keys").put(keyEntry.getText()); 
+					prjConfig.getJSONArray("Strings").put(entry); 
+					prjConfig.getJSONArray("Class").put(prjConfig.getJSONArray("Folders").toList().indexOf(folder)); 
+					
+					for (String key : prjConfig.getJSONObject("Target Languages").keySet().toArray(new String[prjConfig.getJSONObject("Target Languages").keySet().size()])) {
+							prjConfig.getJSONObject("Target Languages").getJSONArray(key).put(""); 
+					}
+					
+					ProjectConfig.write(prjConfig); 
+					saveClicked = true; 
+					
+					primaryStage.close(); 
 				}
-				
-				ProjectConfig.write(prjConfig); 
-				saveClicked = true; 
-				
-				primaryStage.close(); 
 			}
 			
 		});
@@ -137,5 +147,9 @@ public class NewString extends Application {
 	    primaryStage.setTitle(get("gui.main.addstring"));
 		primaryStage.initModality(Modality.APPLICATION_MODAL);
 		primaryStage.showAndWait(); 
+	}
+	
+	public static void setFolder(String folder) {
+		NewString.folder = folder; 
 	}
 }
