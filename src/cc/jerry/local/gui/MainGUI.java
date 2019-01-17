@@ -104,7 +104,7 @@ public class MainGUI extends Application {
 	Button projectLangsEdit; 
 	//--------------------
 	
-	public static Font labelsFont = new Font("Georgia", 14);
+	public static Font labelsFont = new Font("Times New Roman", 14);
 	
 	public void start(Stage primaryStage) {
 		
@@ -130,7 +130,7 @@ public class MainGUI extends Application {
 			tk.setApplicationMenu(defaultMenu); 
 			defaultMenu.getItems().set(0, tk.createAboutMenuItem(get("gui.main.apptitle"), aboutStageBuilder.build())); 
 
-			windowMenu = new Menu("Window");
+			windowMenu = new Menu(get("gui.menu.window"));
 			windowMenu.getItems().addAll(tk.createMinimizeMenuItem(), tk.createZoomMenuItem());
 		}
 		
@@ -319,14 +319,14 @@ public class MainGUI extends Application {
 		});
 		
 		body.add(projectName, 0, 0); 
-		body.add(projectNameEntry, 1, 0, 3, 1); 
-		body.add(projectRenameBtn, 4, 0); 
+		body.add(projectNameEntry, 1, 0); 
+		body.add(projectRenameBtn, 2, 0); 
 		body.add(projectDir, 0, 1); 
-		body.add(projectDirEntry, 1, 1, 2, 1);
-		body.add(projectChangeDirBtn, 4, 1);
+		body.add(projectDirEntry, 1, 1);
+		body.add(projectChangeDirBtn, 2, 1);
 		body.add(projectSrcLang, 0, 2); 
-		body.add(projectSrcLangEntry, 1, 2, 2, 1);
-		body.add(projectChangeSrcLangBtn, 4, 2);
+		body.add(projectSrcLangEntry, 1, 2);
+		body.add(projectChangeSrcLangBtn, 2, 2);
 		body.add(projectLangs, 0, 3);
 		body.add(projectLangsList, 1, 3, 1, 3);
 		body.add(projectLangsAdd, 2, 3);
@@ -336,11 +336,15 @@ public class MainGUI extends Application {
 		GridPane.setHalignment(projectRenameBtn, HPos.RIGHT);
 		GridPane.setHalignment(projectChangeDirBtn, HPos.RIGHT);
 		GridPane.setHalignment(projectChangeSrcLangBtn, HPos.RIGHT);
+		GridPane.setHalignment(projectLangsAdd, HPos.RIGHT); 
+		GridPane.setHalignment(projectLangsRemove, HPos.RIGHT); 
+		GridPane.setHalignment(projectLangsEdit, HPos.RIGHT); 
 		GridPane.setHgrow(projectNameEntry, Priority.ALWAYS); 
 		GridPane.setHgrow(projectDirEntry, Priority.ALWAYS);
 		GridPane.setHgrow(projectSrcLangEntry, Priority.ALWAYS);
 		GridPane.setHgrow(projectLangsList, Priority.ALWAYS);
-		//body.setGridLinesVisible(true);
+		
+//		body.setGridLinesVisible(true);
 		
 		root.setTop(menu);
 		root.setCenter(body); 
@@ -399,7 +403,7 @@ public class MainGUI extends Application {
 			try {
 				projectNameEntry.setText(ProjectConfig.json().getString("Project Name"));
 				projectSrcLangEntry.setText(ProjectConfig.json().getString("Src Language")); 
-				projectDirEntry.setText(ProjectConfig.json().getString("Directory")); 
+				projectDirEntry.setText("..." + File.separator + ProjectConfig.file().getParentFile().getName() + File.separator + ProjectConfig.file().getName()); 
 				
 				for (String key : ProjectConfig.json().getJSONObject("Target Languages").keySet().toArray(new String[ProjectConfig.json().getJSONObject("Target Languages").keySet().size()])) {
 					projectLangsList.getItems().add(key); 

@@ -73,6 +73,7 @@ public class NewProject extends Application{
 	ComboBoxWithSearchBar<String> sourceLanguageSelections; 
 	
 	Label specifyCountryInFilenames; 
+	HBox specifyCountryInFilenamesCont; 
 	ToggleGroup specifyCountryInFilenamesOptions; 
 	RadioButton specifyCountryInFilenamesYes; 
 	RadioButton specifyCountryInFilenamesNo; 
@@ -153,6 +154,9 @@ public class NewProject extends Application{
 		specifyCountryInFilenames = new Label(get("gui.label.specifycountryinfilenames")); 
 		specifyCountryInFilenames.setFont(labelsFont); 
 		
+		specifyCountryInFilenamesCont = new HBox(); 
+		specifyCountryInFilenamesCont.setSpacing(10);
+		
 		specifyCountryInFilenamesOptions = new ToggleGroup(); 
 		
 		specifyCountryInFilenamesYes = new RadioButton(get("gui.label.yes")); 
@@ -179,6 +183,8 @@ public class NewProject extends Application{
 			}
 			
 		});
+		
+		specifyCountryInFilenamesCont.getChildren().addAll(specifyCountryInFilenamesYes, specifyCountryInFilenamesNo); 
 		
 		selectTargetLanguages = new Label(get("gui.label.selecttargetlanguages")); 
 		selectTargetLanguages.setFont(labelsFont); 
@@ -253,26 +259,26 @@ public class NewProject extends Application{
 		center.add(projectName, 0, 0);
 		center.add(projectNameEntry, 1, 0, 4, 1); 
 		center.add(projectDir, 0, 1); 
-		center.add(projectDirEntry, 1, 1, 2, 1); 
+		center.add(projectDirEntry, 1, 1, 3, 1); 
 		center.add(projectDirBtn, 4, 1); 
 		center.add(setSourceLanguage, 0, 2);
 		center.add(sourceLanguageSelections, 1, 2, 4, 1);
 		center.add(specifyCountryInFilenames, 0, 3);
-		center.add(specifyCountryInFilenamesYes, 1, 3); 
-		center.add(specifyCountryInFilenamesNo, 2, 3);
+		center.add(specifyCountryInFilenamesCont, 1, 3); 
 		center.addRow(4, selectTargetLanguages); 
-		center.add(selectedLanguages, 0, 5, 3, 3);
-		center.add(addTLanguage, 3, 5); 
-		center.add(removeSLanguage, 3, 6);
-		center.add(allLanguages, 4, 5, 1, 3);
+		center.add(selectedLanguages, 0, 5, 2, 3);
+		center.add(addTLanguage, 2, 5); 
+		center.add(removeSLanguage, 2, 6);
+		center.add(allLanguages, 3, 5, 2, 3);
 		
 		//center.setGridLinesVisible(true); 
 		
 		GridPane.setHgrow(selectedLanguages, Priority.ALWAYS); 
 		GridPane.setHgrow(projectDirEntry, Priority.ALWAYS);
+		GridPane.setHgrow(projectDirBtn, Priority.ALWAYS); 
 		GridPane.setHgrow(sourceLanguageSelections, Priority.ALWAYS); 
 		GridPane.setHgrow(allLanguages, Priority.ALWAYS); 
-		GridPane.setHgrow(specifyCountryInFilenamesNo, Priority.ALWAYS); 
+		GridPane.setHgrow(specifyCountryInFilenamesCont, Priority.SOMETIMES); 
 		GridPane.setHgrow(addTLanguage, Priority.NEVER); 
 		GridPane.setHgrow(removeSLanguage, Priority.NEVER); 
 		GridPane.setHalignment(projectDirBtn, HPos.RIGHT); 
@@ -305,14 +311,16 @@ public class NewProject extends Application{
 	}
 	
 	private void save(Stage primaryStage) {
-		if (!projectNameEntry.getText().isEmpty() && fileChosen != null && !fileChosen.isEmpty() && !sourceLanguageSelections.getSelectionModel().getSelectedItem().isEmpty() && !selectedLanguages.getItems().isEmpty()) {
+		if (!projectNameEntry.getText().isEmpty() && fileChosen != null && !fileChosen.isEmpty() && !sourceLanguageSelections.getSelectedItem().isEmpty() && !selectedLanguages.getItems().isEmpty()) {
 			JSONObject prjConfig = new JSONObject(); 
 			
 			prjConfig.put("Project Name", projectNameEntry.getText()); 
 			prjConfig.put("Directory", fileChosen); 
-			prjConfig.put("Src Language", sourceLanguageSelections.getSelectionModel().getSelectedItem()); 
+			prjConfig.put("Src Language", sourceLanguageSelections.getSelectedItem()); 
+			prjConfig.put("Folders", new JSONArray()); 
 			prjConfig.put("Keys", new JSONArray()); 
 			prjConfig.put("Strings", new JSONArray()); 
+			prjConfig.put("Class", new JSONArray()); 
 			
 			JSONObject tarLangList = new JSONObject(); 
 			
