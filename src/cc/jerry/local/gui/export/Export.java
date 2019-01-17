@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import cc.jerry.local.gui.MainGUI;
 import cc.jerry.local.gui.popups.RemoveConfirmation;
+import cc.jerry.local.utils.AddLangs;
 import cc.jerry.local.utils.CustomizedFileFormats;
 import cc.jerry.local.utils.LocaleUtils;
 import cc.jerry.local.utils.ProjectConfig;
@@ -205,10 +206,12 @@ public class Export extends Application {
 		fileNameFormat.setFont(labelsFont); 
 		
 		fileNameFormatList = new ComboBox<String>(); 
-		fileNameFormatList.getItems().add("en"); 
-		fileNameFormatList.getItems().add("english"); 
-		fileNameFormatList.getItems().add("English"); 
-		if (ProjectConfig.json().getBoolean("Specify Country in Filenames")) {
+		if (!ProjectConfig.json().getBoolean("Specify Country in Filenames")) {
+			fileNameFormatList.getItems().add("en"); 
+			fileNameFormatList.getItems().add("english"); 
+			fileNameFormatList.getItems().add("English"); 
+		}
+		else {
 			fileNameFormatList.getItems().add("en_US"); 
 			fileNameFormatList.getItems().add("en-US"); 
 		}
@@ -251,10 +254,12 @@ public class Export extends Application {
 				DirectoryChooser dirChooser = new DirectoryChooser(); 
 				dirChooser.setInitialDirectory(ProjectConfig.file().getParentFile()); 
 				dirChosen = dirChooser.showDialog(new Stage()); 
-				if (dirChosen.getAbsolutePath().endsWith(File.separator))
-					directoryEntry.setText(dirChosen.getAbsolutePath()); 
-				else 
-					directoryEntry.setText(dirChosen.getAbsolutePath() + File.separator); 
+				if (dirChosen != null) {
+					if (dirChosen.getAbsolutePath().endsWith(File.separator))
+						directoryEntry.setText(dirChosen.getAbsolutePath()); 
+					else 
+						directoryEntry.setText(dirChosen.getAbsolutePath() + File.separator); 
+				}
 			}
 			
 		});
@@ -286,7 +291,10 @@ public class Export extends Application {
 				if (fileSuffixEntry.getText().contains(".") && !fileSuffixEntry.getText().contains(" ")) {
 					File folder = null; 
 					if (createNewFolder.isSelected())
-						folder = new File(dirChosen.getAbsolutePath() + File.separator + "langs"); 
+						if (dirChosen.getAbsolutePath().endsWith(File.separator))
+							folder = new File(dirChosen.getAbsolutePath() + "langs"); 
+						else
+							folder = new File(dirChosen.getAbsolutePath() + File.separator + "langs"); 
 					else 
 						folder = dirChosen; 
 					
@@ -294,32 +302,57 @@ public class Export extends Application {
 					
 					JSONObject json = ProjectConfig.json(); 
 					
-					for (String lang : json.getJSONObject("Target Languages").keySet().toArray(new String[0])) {
-						Locale locale = LocaleUtils.nameToLocale(lang); 
+					
+					
+					for (int i = -1; i < json.getJSONObject("Target Languages").keySet().size(); i++) {
+						String lang = i == -1 ? json.getString("Src Language") : json.getJSONObject("Target Languages").keySet().toArray(new String[0])[i]; 
+						int langIndex = -1; 
+						Locale locale = null; 
+						try {
+							langIndex = (Integer) LocaleUtils.nameToLocale(lang); 
+						} catch (ClassCastException e) {
+							locale = (Locale) LocaleUtils.nameToLocale(lang); 
+						}
 						
 						System.out.println(lang); 
+						System.out.println(langIndex);
 						
 						String fileName = null; 
 						
-						switch (fileNameFormatList.getSelectionModel().getSelectedIndex()) {
-							case 0: 
-								fileName = locale.getLanguage(); 
+						switch (fileNameFormatList.getSelectionModel().getSelectedItem()) {
+							case "en": 
+								if (langIndex == -1)
+									fileName = locale.getLanguage(); 
+								else 
+									fileName = AddLangs.langTags[langIndex]; 
 								break; 
 								
-							case 1:
-								fileName = locale.getDisplayLanguage(Locale.ENGLISH).toLowerCase(); 
+							case "english":
+								if (langIndex == -1)
+									fileName = locale.getDisplayLanguage(Locale.ENGLISH).toLowerCase(); 
+								else
+									fileName = AddLangs.langNames[langIndex].toLowerCase(); 
 								break; 
 								
-							case 2: 
-								fileName = locale.getDisplayLanguage(Locale.ENGLISH); 
+							case "English": 
+								if (langIndex == -1)
+									fileName = locale.getDisplayLanguage(Locale.ENGLISH); 
+								else 
+									fileName = AddLangs.langNames[langIndex]; 
 								break; 
 								
-							case 3:
-								fileName = locale.getLanguage() + "_" + locale.getCountry(); 
+							case "en_US":
+								if (langIndex == -1)
+									fileName = locale.getLanguage() + "_" + locale.getCountry(); 
+								else 
+									fileName = AddLangs.langTagsFullU[langIndex]; 
 								break; 
 								
-							case 4:
-								fileName = locale.getLanguage() + "-" + locale.getCountry(); 
+							case "en-US":
+								if (langIndex == -1)
+									fileName = locale.getLanguage() + "-" + locale.getCountry(); 
+								else 
+									fileName = AddLangs.langTagsFull[langIndex]; 
 								break; 
 								
 							default:
@@ -331,7 +364,10 @@ public class Export extends Application {
 							Properties pFile = new Properties(); 
 							
 							for (int j = 0; j < json.getJSONArray("Keys").length(); j++) {
-								pFile.setProperty(json.getJSONArray("Keys").getString(j), StringEscapeUtils.unescapeJava(json.getJSONObject("Target Languages").getJSONArray(lang).getString(j))); 
+								if (i == -1)
+									pFile.setProperty(json.getJSONArray("Keys").getString(j), StringEscapeUtils.unescapeJava(json.getJSONArray("Strings").getString(j))); 
+								else 
+									pFile.setProperty(json.getJSONArray("Keys").getString(j), StringEscapeUtils.unescapeJava(json.getJSONObject("Target Languages").getJSONArray(lang).getString(j))); 
 							}
 							
 							try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(folder.getAbsolutePath() + File.separator + fileName + fileSuffixEntry.getText())), "UTF-8")) {
@@ -345,7 +381,10 @@ public class Export extends Application {
 								writer.println("{");
 								for (int j = 0; j < json.getJSONArray("Keys").length(); j++) {
 									if (j != 0) writer.println(","); 
-									writer.print("  \"" + json.getJSONArray("Keys").getString(j) + "\":\"" + StringEscapeUtils.unescapeJava(json.getJSONObject("Target Languages").getJSONArray(lang).getString(j)) + "\""); 
+									if (i == -1)
+										writer.print("  \"" + json.getJSONArray("Keys").getString(j) + "\":\"" + StringEscapeUtils.unescapeJava(json.getJSONArray("Strings").getString(j)) + "\""); 
+									else
+										writer.print("  \"" + json.getJSONArray("Keys").getString(j) + "\":\"" + StringEscapeUtils.unescapeJava(json.getJSONObject("Target Languages").getJSONArray(lang).getString(j)) + "\""); 
 								}
 								writer.println(); 
 								writer.println("}"); 

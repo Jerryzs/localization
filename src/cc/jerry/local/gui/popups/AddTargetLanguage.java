@@ -32,7 +32,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -46,7 +45,7 @@ public class AddTargetLanguage extends Application {
 	Scene scene; 
 	GridPane root; 
 	
-	ComboBox<String> languages; 
+	ComboBoxWithSearchBar<String> languages; 
 	
 	HBox aBtns; 
 	Button cancel;
@@ -96,7 +95,7 @@ public class AddTargetLanguage extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				if (!languages.getSelectionModel().isEmpty()) {
+				if (!languages.getSelectedItem().isEmpty()) {
 					JSONObject prjConfig = ProjectConfig.json(); 
 					
 					JSONArray newLangItem = new JSONArray(); 
@@ -104,7 +103,7 @@ public class AddTargetLanguage extends Application {
 					for (int i = 0; i < prjConfig.getJSONArray("Strings").length(); i++) 
 						newLangItem.put(""); 
 					
-					prjConfig.getJSONObject("Target Languages").put(languages.getSelectionModel().getSelectedItem(), newLangItem); 
+					prjConfig.getJSONObject("Target Languages").put(languages.getSelectedItem(), newLangItem); 
 					
 					ProjectConfig.write(prjConfig); 
 					success = true; 

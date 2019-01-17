@@ -17,5 +17,7 @@
 package cc.jerry.local.utils;
 
 public class References {
+	
 	public static String version = "0.1b"; 
+	
 }

@@ -30,6 +30,13 @@ public class LocaleUtils {
 				locales.add(locale.getDisplayName()); 
 		}
 		
+		for (int i = 0; i < AddLangs.size; i++) {
+			if (withCountryName) 
+				locales.add(AddLangs.langNamesFull[i]); 
+			else 
+				locales.add(AddLangs.langNames[i]); 
+		}
+		
 		return locales.toArray(new String[0]); 
 	}
 	
@@ -37,11 +44,17 @@ public class LocaleUtils {
 		return getAllLocaleNames(ProjectConfig.json().getBoolean("Specify Country in Filenames")); 
 	}
 	
-	public static Locale nameToLocale(String localeDisplayName) {
+	public static Object nameToLocale(String localeDisplayName) {
 		for (Locale locale : Locale.getAvailableLocales()) {
-			if (locale.getDisplayName().contains(localeDisplayName)) {
+			if (locale.getDisplayName().equals(localeDisplayName) || locale.getDisplayLanguage().equals(localeDisplayName)) {
 				return locale; 
 			}
+		}
+		
+		for (int i = 0; i < AddLangs.size; i++) {
+			String locale = AddLangs.langNamesFull[i]; 
+			if (locale.contains(localeDisplayName))
+				return i; 
 		}
 		
 		return null; 

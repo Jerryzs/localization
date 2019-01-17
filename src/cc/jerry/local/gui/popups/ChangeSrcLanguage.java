@@ -31,7 +31,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -45,7 +44,7 @@ public class ChangeSrcLanguage extends Application {
 	Scene scene; 
 	GridPane root; 
 	
-	ComboBox<String> languages; 
+	ComboBoxWithSearchBar<String> languages; 
 	
 	HBox aBtns; 
 	Button cancel;
@@ -94,9 +93,9 @@ public class ChangeSrcLanguage extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				if (!languages.getSelectionModel().isEmpty()) {
+				if (!languages.getSelectedItem().isEmpty()) {
 					JSONObject prjConfig = ProjectConfig.json(); 
-					prjConfig.put("Src Language", languages.getSelectionModel().getSelectedItem()); 
+					prjConfig.put("Src Language", languages.getSelectedItem()); 
 					
 					ProjectConfig.write(prjConfig); 
 					closed = true; 
