@@ -22,7 +22,6 @@ import org.json.JSONObject;
 
 import cc.jerry.local.gui.MainGUI;
 import cc.jerry.local.utils.ProjectConfig;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -39,7 +38,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class EditString extends Application {
+public class EditString {
 	//--------------------
 	Scene scene; 
 	GridPane root; 
@@ -103,15 +102,23 @@ public class EditString extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				prjConfig = ProjectConfig.json(); 
-				
-				prjConfig.getJSONArray("Keys").put(_index, keyEntry.getText()); 
-				prjConfig.getJSONArray("Strings").put(_index, stringEntry.getText()); 
-				
-				ProjectConfig.write(prjConfig); 
-				saveClicked = true; 
-				
-				primaryStage.close(); 
+				if (!keyEntry.getText().contains("|")) {
+					prjConfig = ProjectConfig.json(); 
+					
+					String entry = ""; 
+					
+					for (char c : stringEntry.getText().toCharArray()) {
+						entry += "\\u" + Integer.toHexString(c | 0x10000).substring(1); 
+					}
+					
+					prjConfig.getJSONArray("Keys").put(_index, keyEntry.getText()); 
+					prjConfig.getJSONArray("Strings").put(_index, entry); 
+					
+					ProjectConfig.write(prjConfig); 
+					saveClicked = true; 
+					
+					primaryStage.close(); 
+				}
 			}
 			
 		});
