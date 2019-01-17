@@ -1,0 +1,96 @@
+#titles
+gui.main.apptitle=Jerry's Localization Organizer
+gui.main.newproject=New Project
+gui.main.editor=Editor
+gui.main.addstring=Add String
+gui.main.removeconfirmation=Remove? 
+gui.main.selectlanguage=Select Language
+gui.main.rename=Rename
+gui.main.exportoptions=Export Options
+gui.main.customizedfileformat=Customized File Format
+gui.main.message=Message
+gui.main.settings=Settings
+gui.main.movestring=Move String
+gui.main.addfolder=Add Folder
+gui.main.editfolder=Edit Folder
+
+#menu: Default
+gui.menu.default=Localization
+
+#menu: File
+gui.menu.file=File
+gui.menu.file.new=New Project...
+gui.menu.file.open=Open...
+gui.menu.file.export=Export
+gui.menu.file.settings=Settings
+
+#menu: Edit
+gui.menu.edit=Edit
+
+#labels
+gui.label.projectname=Project Name: 
+gui.label.projectsourcelanguage=Project Source Language: 
+gui.label.projectlangs=Target Languages: 
+gui.label.projectdirectory=Project Directory: 
+gui.label.setsourcelanguage=Set Source Language: 
+gui.label.selecttargetlanguages=Select Target Languages: 
+gui.label.save=Save
+gui.label.cancel=Cancel
+gui.label.rename=Rename
+gui.label.move=Move
+gui.label.change=Change
+gui.label.edit=Edit
+gui.label.add=Add
+gui.label.remove=Remove
+gui.label.strings=Strings: 
+gui.label.key=Key: 
+gui.label.string=String: 
+gui.label.translate=Translate: 
+gui.label.total=Total: 
+gui.label.translated=Translated: 
+gui.label.nottranslated=Not Translated: 
+gui.label.shownottranslatedstringsfirst=Show Not Translated Strings First
+gui.label.yes=Yes
+gui.label.no=No
+gui.label.fileformat=File Format: 
+gui.label.filesuffix=File Suffix: 
+gui.label.customize=Customization
+gui.label.syntax=Syntax: 
+gui.label.funcbuttons=Placeholders: 
+gui.label.name=Name: 
+gui.label.filenameformat=File Name Format: 
+gui.label.exportdirectory=Export Directory: 
+gui.label.close=Close
+gui.label.export=Export
+gui.label.done=Done
+gui.label.language=Language: 
+gui.label.selected=Selected:
+gui.label.options=Options: 
+gui.label.combinealllangs=Combine All Languages in One File? 
+gui.label.specifycountryinfilenames=Specify Country In Filenames: 
+gui.label.comebacklater=Come Back Later
+gui.label.folder=Folder: 
+
+#texts
+gui.text.untitled=Untitled
+gui.text.createnewfolder=Create New Folder
+gui.text.about=About
+gui.text.version=Version
+gui.text.files=Files
+gui.text.systemdefault=System Default
+gui.text.unclassified=Not Classified
+gui.text.all=All
+
+#function buttons
+gui.functions.repeat.begin=Repeat Begin
+gui.functions.repeat.end=Repeat End
+gui.functions.sourcelang=Source Language
+gui.functions.targetlang=Target Language
+
+#messages
+gui.message.plsopenprojectfile=Please open a project file
+gui.message.removeconfirmationmessage=Are you sure you want to remove this? 
+gui.message.fileisinvalid=File is invalid
+gui.message.underdevelopment=(Coming Soon)
+gui.message.filenotcreatederror=File could not be created. 
+gui.message.pleasewaitforinit=Please wait for initialization (takes about 1 minute after app launched)

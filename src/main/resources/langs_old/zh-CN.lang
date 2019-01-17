@@ -1,0 +1,90 @@
+#titles
+gui.main.apptitle=本地化文件管理程序
+gui.main.newproject=新建项目
+gui.main.editor=编辑器
+gui.main.addstring=添加字符串
+gui.main.removeconfirmation=确认删除
+gui.main.selectlanguage=选择语言
+gui.main.rename=重命名
+gui.main.exportoptions=导出选项
+gui.main.customizedfileformat=自定义文件格式
+gui.main.message=提示
+gui.main.settings=设置
+
+#menu: Default
+gui.menu.default=管理器
+
+#menu: File
+gui.menu.file=文件
+gui.menu.file.new=新建项目
+gui.menu.file.open=打开
+gui.menu.file.export=导出
+gui.menu.file.settings=设置
+
+#menu: Edit
+gui.menu.edit=编辑
+
+#labels
+gui.label.projectname=项目名称： 
+gui.label.projectsourcelanguage=项目源语言： 
+gui.label.projectlangs=项目目标语言： 
+gui.label.projectdirectory=项目文件位置： 
+gui.label.setsourcelanguage=选择源语言： 
+gui.label.selecttargetlanguages=选择目标语言： 
+gui.label.save=保存
+gui.label.cancel=取消
+gui.label.rename=重命名
+gui.label.move=移动
+gui.label.change=更改
+gui.label.edit=编辑
+gui.label.add=添加
+gui.label.remove=删除
+gui.label.strings=所有字符串： 
+gui.label.key=标识： 
+gui.label.string=字符串： 
+gui.label.translate=翻译： 
+gui.label.total=总计： 
+gui.label.translated=已翻译：  
+gui.label.nottranslated=未翻译： 
+gui.label.shownottranslatedstringsfirst=优先显示未翻译字符串
+gui.label.yes=是
+gui.label.no=否
+gui.label.fileformat=文件格式： 
+gui.label.filesuffix=文件扩展名： 
+gui.label.customize=自定义
+gui.label.syntax=语法： 
+gui.label.funcbuttons=占位符： 
+gui.label.name=名称： 
+gui.label.filenameformat=文件名称格式： 
+gui.label.exportdirectory=导出目录： 
+gui.label.close=关闭
+gui.label.export=导出
+gui.label.done=完成
+gui.label.language=语言: 
+gui.label.selected=选择： 
+gui.label.options=选项： 
+gui.label.combinealllangs=合并所有语言到一个文件中？
+gui.label.specifycountryinfilenames=在语言文件名中包含国家名称？
+gui.label.comebacklater=稍后查看
+
+#texts
+gui.text.untitled=未命名
+gui.text.createnewfolder=新建文件夹
+gui.text.about=关于
+gui.text.version=版本
+gui.text.files=文件
+gui.text.systemdefault=系统默认
+
+#function buttons
+gui.functions.repeat.begin=Repeat Begin
+gui.functions.repeat.end=Repeat End
+gui.functions.sourcelang=Source Language
+gui.functions.targetlang=Target Language
+
+#messages
+gui.message.plsopenprojectfile=请打开一个项目文件
+gui.message.removeconfirmationmessage=确认删除?
+gui.message.fileisinvalid=文件错误
+gui.message.underdevelopment=（即将到来）
+gui.message.filenotcreatederror=无法创建文件
+gui.message.pleasewaitforinit=请等待软件完成初始化 (启动后大约1分钟)
