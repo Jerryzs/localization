@@ -1,4 +1,4 @@
-#Thu Jan 17 09:48:49 EST 2019
+#Thu Jan 17 22:08:41 EST 2019
 gui.label.selected=Selected
 gui.label.strings=Strings\: 
 gui.label.translate=Translate\: 
@@ -78,5 +78,6 @@ gui.label.remove=Remove
 gui.label.nottranslated=Not Translated\: 
 gui.label.exportdirectory=Export Directory\: 
 gui.label.combinealllangs=Combine All Languages in One File?
+gui.label.translateprogress=Translate Progress\: 
 gui.label.export=Export
 gui.label.key=Key\: 

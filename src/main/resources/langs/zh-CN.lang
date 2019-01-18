@@ -1,4 +1,4 @@
-#Thu Jan 17 09:48:49 EST 2019
+#Thu Jan 17 22:08:41 EST 2019
 gui.label.selected=选择：
 gui.label.strings=所有字符串：
 gui.label.translate=翻译：
@@ -78,5 +78,6 @@ gui.label.remove=删除
 gui.label.nottranslated=未翻译：
 gui.label.exportdirectory=导出目录：
 gui.label.combinealllangs=合并所有语言到一个文件中？
+gui.label.translateprogress=翻译进度：
 gui.label.export=导出
 gui.label.key=标识：
