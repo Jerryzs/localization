@@ -35,12 +35,10 @@ public class Main extends Application {
 			try {
 			    String className = "com.apple.eawt.Application";
 			    Class<?> cls = Class.forName(className);
-			
-			    // Replace: Application application = Application.getApplication();
+			    
 			    Object application = cls.newInstance().getClass().getMethod("getApplication")
 			        .invoke(null);
-			
-			    // Replace: application.setDockIconImage(image);
+			    
 			    application.getClass().getMethod("setDockIconImage", java.awt.Image.class)
 			        .invoke(application, (new ImageIcon(getClass().getResource("/main/resources/appicon.png")).getImage()));
 			} catch (Exception e) {
