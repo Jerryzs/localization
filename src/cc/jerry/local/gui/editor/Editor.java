@@ -522,6 +522,8 @@ public class Editor {
 						for (int i = 0; i < prjConfig.getJSONArray("Class").length(); i++) {
 							if (prjConfig.getJSONArray("Class").getInt(i) == index)
 								prjConfig.getJSONArray("Class").put(i, -1); 
+							if (prjConfig.getJSONArray("Class").getInt(i) > index)
+								prjConfig.getJSONArray("Class").put(i, prjConfig.getJSONArray("Class").getInt(i) - 1); 
 						}
 						
 						prjConfig.getJSONArray("Folders").remove(index); 
