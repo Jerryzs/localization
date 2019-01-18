@@ -51,11 +51,16 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
@@ -98,6 +103,11 @@ public class MainGUI extends Application {
 	
 	Label projectLangs; 
 	ListView<String> projectLangsList;
+	
+	Label translateProgress; 
+	HBox translateProgressCont; 
+	ProgressBar translateProgressBar; 
+	Label translateProgressText; 
 	
 	Button projectLangsAdd; 
 	Button projectLangsRemove; 
@@ -279,6 +289,23 @@ public class MainGUI extends Application {
 		
 		projectLangsList = new ListView<>();
 		projectLangsList.setPrefHeight(50);
+		projectLangsList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				updateTranslateProgress(); 
+			}
+			
+		});
+		projectLangsList.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN)
+					updateTranslateProgress(); 
+			}
+			
+		});
 		
 		projectLangsAdd = new Button(get("gui.label.add")); 
 		projectLangsAdd.setFont(labelsFont); 
@@ -318,6 +345,20 @@ public class MainGUI extends Application {
 			
 		});
 		
+		translateProgress = new Label(get("gui.label.translateprogress")); 
+		translateProgress.setFont(labelsFont); 
+		
+		translateProgressCont = new HBox(); 
+		translateProgressCont.setSpacing(10);
+		
+		translateProgressBar = new ProgressBar(); 
+		translateProgressBar.setProgress(0); 
+
+		translateProgressText = new Label("0%"); 
+		
+		translateProgressBar.prefWidthProperty().bind(body.widthProperty().subtract(70)); 
+		translateProgressCont.getChildren().addAll(translateProgressBar, translateProgressText); 
+		
 		body.add(projectName, 0, 0); 
 		body.add(projectNameEntry, 1, 0); 
 		body.add(projectRenameBtn, 2, 0); 
@@ -332,6 +373,8 @@ public class MainGUI extends Application {
 		body.add(projectLangsAdd, 2, 3);
 		body.add(projectLangsRemove, 2, 4); 
 		body.add(projectLangsEdit, 2, 5); 
+		body.add(translateProgress, 0, 6); 
+		body.add(translateProgressCont, 0, 7, 3, 1); 
 		
 		GridPane.setHalignment(projectRenameBtn, HPos.RIGHT);
 		GridPane.setHalignment(projectChangeDirBtn, HPos.RIGHT);
@@ -389,6 +432,8 @@ public class MainGUI extends Application {
 					ProjectConfig.closeReader(); 
 					(new MainGUI()).start(primaryStage); 
 				}
+				if (ProjectConfig.json() != null)
+					updateTranslateProgress(); 
 			}
 	    	
 	    });
@@ -417,5 +462,21 @@ public class MainGUI extends Application {
 		}
 		else
 			projectNameEntry.setText(get("gui.message.fileisinvalid")); 
+	}
+	
+	private void updateTranslateProgress() {
+		if (!projectLangsList.getSelectionModel().isEmpty()) {
+			JSONObject json = ProjectConfig.json(); 
+			double translated = 0; 
+			int allStrings = json.getJSONArray("Keys").length(); 
+			
+			for (int i = 0; i < allStrings; i++) {
+				if (!json.getJSONObject("Target Languages").getJSONArray(projectLangsList.getSelectionModel().getSelectedItem()).getString(i).isEmpty())
+					translated++; 
+			}
+			
+			translateProgressBar.setProgress(translated/allStrings); 
+			translateProgressText.setText(Math.round(translated/allStrings*100) + "%"); 
+		}
 	}
 }
