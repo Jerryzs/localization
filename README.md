@@ -9,8 +9,8 @@ This application allows you to organize and export localization files for your J
 
 ## Contribute
 If you'd like to contribute to this project, please follow these requirements: 
-* Use this Integrated Development Environment (IDE): **Eclipse Java IDE** *([Oxygen 3a](https://www.eclipse.org/downloads/packages/release/oxygen/3a/eclipse-ide-java-developers) is recommended)*
-* Use this version of Java Development Kit (JDK): **JDK 1.8**
+* Use this Integrated Development Environment (IDE): **Eclipse Java IDE** *([2018-09 (4.9.0)](https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-java-developers) is recommended)*
+* Use this version of Java Development Kit (JDK): **JDK 1.8.0** *(Update 202 or above)*
 
 ## Exporting Files
 ### Java Properties File
