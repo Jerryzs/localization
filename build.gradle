@@ -1,0 +1,74 @@
+plugins {
+  id 'application'
+  id 'java'
+  id 'org.openjfx.javafxplugin' version '0.0.7'
+  id 'org.beryx.jlink' version '2.10.2'
+}
+
+group 'cc.jerry'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+javafx {
+    version = "11.0.2"
+    modules = [ 'javafx.controls' ]
+}
+
+dependencies {
+	compile fileTree(dir: 'lib', include: '*.jar')
+}
+
+jlink {
+    options = ['--compress', '2', '--no-header-files', '--no-man-pages']
+
+    addExtraDependencies('javafx')
+
+//    targetPlatform('windows') {
+//        jdkHome = 'C:\\Program Files\\Java\\jdk-11.0.3'
+//        addExtraModulePath('C:\\Users\\jerry\\Documents\\Library\\javafx-jmods-11.0.2')
+//    }
+//    targetPlatform('linux-x64') {
+//        jdkHome = 'C:\\Users\\jerry\\Documents\\Library\\openjdk-11.0.2-linux'
+//        addExtraModulePath('C:\\Users\\jerry\\Documents\\Library\\javafx-jmods-11.0.2-linux')
+//    }
+//    targetPlatform('macos') {
+//        jdkHome = 'C:\\Users\\jerry\\Documents\\Library\\openjdk-11.0.2-osx'
+//        addExtraModulePath('C:\\Users\\jerry\\Documents\\Library\\javafx-jmods-11.0.2-osx')
+//    }
+
+    launcher {
+        name = 'Localization Strings Manager'
+    }
+
+    jpackage {
+        jpackageHome = 'C:\\Program Files\\Java\\jdk-13'
+//        targetPlatformName = "windows"
+        imageOptions = ['--icon', 'icon.ico']
+        skipInstaller = false
+        installerType = 'msi'
+        installerOptions = ['--win-menu', '--win-shortcut', '--win-menu-group', 'Jerry\'s Applications']
+    }
+
+}
+
+mainClassName = 'cc.jerry.local/cc.jerry.local.main.Main'
+
+task export {
+    dependsOn 'clean'
+    dependsOn 'build'
+    dependsOn 'jlink'
+    dependsOn 'jpackage'
+    tasks.findByName('build').mustRunAfter 'clean'
+    tasks.findByName('jlink').mustRunAfter 'build'
+    tasks.findByName('jpackage').mustRunAfter 'jlink'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'cc.jerry.local/cc.jerry.local.main.Main'
+        attributes 'Add-Exports': 'javafx.graphics/com.sun.javafx.tk'
+    }
+}

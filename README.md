@@ -1,13 +1,11 @@
-# Jerry's Localization Organizer [![License](https://img.shields.io/github/license/Jerryzs/localization-legacy.svg)](https://www.apache.org/licenses/LICENSE-2.0) [![Release](https://img.shields.io/github/release-pre/Jerryzs/localization-legacy.svg)](https://github.com/Jerryzs/localization-legacy/releases)
+# Jerry's Localization Organizer [![Build Status](https://travis-ci.org/Jerryzs/localization.svg?branch=master)](https://travis-ci.org/Jerryzs/localization) [![License](https://img.shields.io/github/license/Jerryzs/localization.svg)](https://www.apache.org/licenses/LICENSE-2.0) [![Release](https://img.shields.io/github/release-pre/Jerryzs/localization.svg)](https://github.com/Jerryzs/localization/releases)
 
 This project is licensed under Apache License 2.0, see [here](https://www.apache.org/licenses/LICENSE-2.0). <br>
-[Go to Official Site](http://jerry.cc/projects/page.php?id=2)
+[Go to Official Site](http://jerry.cc/projects/page.php?Project=Jerry%27s%20Localization%20Organizer)
 
 ## Introduction
-**Important! This repository only contains the earlier versions (*below v1.0*) of this project! For v1.0 and above, visit: https://github.com/Jerryzs/localization/**
-
 This application allows you to organize and export localization files for your Java project (and perhaps other projects as well). <br>
-*~~It takes a while for the application to launch, this may be fixed in future updates.~~ (Fixed in [v0.6.1b](https://github.com/Jerryzs/localization-legacy/releases/tag/v0.6.1b))*
+*~~It takes a while for the application to launch, this may be fixed in future updates.~~ (Fixed in [v0.6.1b](https://github.com/Jerryzs/localization/releases/tag/v0.6.1b))*
 
 ## Contribute
 If you'd like to contribute to this project, please follow these requirements: 
