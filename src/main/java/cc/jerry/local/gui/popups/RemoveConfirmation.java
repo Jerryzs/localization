@@ -17,7 +17,7 @@
 package cc.jerry.local.gui.popups;
 
 import cc.jerry.local.gui.MainGUI;
-import cc.jerry.local.main.Main;
+import cc.jerry.local.Main;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

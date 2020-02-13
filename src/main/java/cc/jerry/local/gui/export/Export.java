@@ -18,7 +18,7 @@ package cc.jerry.local.gui.export;
 
 import cc.jerry.local.gui.MainGUI;
 import cc.jerry.local.gui.popups.RemoveConfirmation;
-import cc.jerry.local.main.Main;
+import cc.jerry.local.Main;
 import cc.jerry.local.utils.AddLangs;
 import cc.jerry.local.utils.CustomizedFileFormats;
 import cc.jerry.local.utils.LocaleUtils;

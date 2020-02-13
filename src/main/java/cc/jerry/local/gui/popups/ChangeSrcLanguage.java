@@ -18,7 +18,7 @@ package cc.jerry.local.gui.popups;
 
 import cc.jerry.commons.javafx.ComboBoxWithSearchBar;
 import cc.jerry.local.gui.MainGUI;
-import cc.jerry.local.main.Main;
+import cc.jerry.local.Main;
 import cc.jerry.local.utils.LocaleUtils;
 import cc.jerry.local.utils.ProjectConfig;
 import javafx.geometry.Insets;

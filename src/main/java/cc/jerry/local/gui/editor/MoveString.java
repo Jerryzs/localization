@@ -18,16 +18,12 @@ package cc.jerry.local.gui.editor;
 
 import static cc.jerry.commons.util.Localization.get;
 
-import java.util.Iterator;
-
 import org.json.JSONObject;
 
 import cc.jerry.commons.javafx.ComboBoxWithSearchBar;
 import cc.jerry.local.gui.MainGUI;
-import cc.jerry.local.main.Main;
+import cc.jerry.local.Main;
 import cc.jerry.local.utils.ProjectConfig;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

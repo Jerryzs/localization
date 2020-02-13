@@ -23,7 +23,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import cc.jerry.local.main.Main;
+import cc.jerry.local.Main;
 
 public class LocaleUtils {
 	

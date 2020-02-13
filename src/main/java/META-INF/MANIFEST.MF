@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: cc.jerry.local.main.Main
+Main-Class: cc.jerry.local.Main
 Add-Exports: javafx.graphics/com.sun.javafx.tk
 

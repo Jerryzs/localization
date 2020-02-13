@@ -19,11 +19,7 @@ package cc.jerry.local.gui;
 import static cc.jerry.commons.util.Localization.get;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Calendar;
 
-import javafx.scene.image.Image;
 import org.json.JSONObject;
 
 import cc.jerry.commons.util.OS;
@@ -34,7 +30,7 @@ import cc.jerry.local.gui.popups.AddTargetLanguage;
 import cc.jerry.local.gui.popups.ChangeSrcLanguage;
 import cc.jerry.local.gui.popups.RemoveConfirmation;
 import cc.jerry.local.gui.popups.Rename;
-import cc.jerry.local.main.Main;
+import cc.jerry.local.Main;
 import cc.jerry.local.utils.ProjectConfig;
 //import cc.jerry.local.utils.References;
 //import de.codecentric.centerdevice.MenuToolkit;
@@ -179,7 +175,7 @@ public class MainGUI {
 		fileMenu.getItems().add(settingsFileItem); 
 		
 		menu.getMenus().addAll(fileMenu);
-		if (OS.os() == SystemType.Mac) 
+		if (OS.os() == SystemType.MACOS)
 			menu.getMenus().add(windowMenu);
 		
 		projectName = new Label(get("gui.label.projectname"));

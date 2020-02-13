@@ -18,23 +18,16 @@ package cc.jerry.local.gui.editor;
 
 import static cc.jerry.commons.util.Localization.get;
 
-import java.util.Iterator;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
 
 import cc.jerry.commons.javafx.ComboBoxWithSearchBar;
 import cc.jerry.local.gui.MainGUI;
 import cc.jerry.local.gui.popups.RemoveConfirmation;
-import cc.jerry.local.main.Main;
+import cc.jerry.local.Main;
 import cc.jerry.local.utils.ProjectConfig;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -45,8 +38,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
