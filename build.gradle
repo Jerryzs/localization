@@ -1,7 +1,7 @@
 plugins {
   id 'application'
   id 'java'
-  id 'org.openjfx.javafxplugin' version '0.0.7'
+  id 'org.openjfx.javafxplugin' version '0.0.8'
   id 'org.beryx.jlink' version '2.10.2'
 }
 
@@ -18,7 +18,13 @@ javafx {
 }
 
 dependencies {
-	compile fileTree(dir: 'lib', include: '*.jar')
+    compile group: 'org.json', name: 'json', version: '20190722'
+    compile group: 'de.codecentric.centerdevice', name: 'centerdevice-nsmenufx', version: '2.1.7'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+    compile group: 'org.apache.commons', name: 'commons-compress', version: '1.20'
+
+    compile fileTree(dir: 'lib', include: '*.jar')
 }
 
 jlink {
@@ -54,7 +60,7 @@ jlink {
 
 }
 
-mainClassName = 'cc.jerry.local/cc.jerry.local.main.Main'
+mainClassName = 'cc.jerry.local/cc.jerry.local.Main'
 
 task export {
     dependsOn 'clean'
