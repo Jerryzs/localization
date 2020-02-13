@@ -10,4 +10,4 @@ branches:
   - legacy
 
 script:
-  - ./gradlew build --scan -s
+  - ./gradlew build
