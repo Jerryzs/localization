@@ -56,8 +56,6 @@ public class Export {
     BorderPane root;
     GridPane center;
 
-    Label title;
-
     Label fileFormat;
     ComboBox<String> fileFormatList;
 
@@ -92,12 +90,6 @@ public class Export {
         center.setVgap(10);
         center.setHgap(10);
         root.setCenter(center);
-
-        title = new Label(get("gui.main.exportoptions"));
-        title.setFont(labelsFont);
-        title.setPadding(new Insets(0, 0, 10, 0));
-        root.setTop(title);
-        BorderPane.setAlignment(title, Pos.CENTER);
 
         fileFormat = new Label(get("gui.label.fileformat"));
         fileFormat.setFont(labelsFont);
@@ -145,7 +137,7 @@ public class Export {
 
         eBtns = new HBox();
         eBtns.setSpacing(10);
-        eBtns.setAlignment(Pos.CENTER);
+        eBtns.setAlignment(Pos.CENTER_LEFT);
 
         editFileFormat = new Button(get("gui.label.edit"));
         editFileFormat.setFont(labelsFont);
