@@ -306,12 +306,13 @@ public class MainGUI {
 		GridPane.setHalignment(projectChangeSrcLangBtn, HPos.RIGHT);
 		GridPane.setHalignment(projectLangsAdd, HPos.RIGHT); 
 		GridPane.setHalignment(projectLangsRemove, HPos.RIGHT); 
-		GridPane.setHalignment(projectLangsEdit, HPos.RIGHT); 
-		GridPane.setHgrow(projectNameEntry, Priority.ALWAYS); 
-		GridPane.setHgrow(projectDirEntry, Priority.ALWAYS);
+		GridPane.setHalignment(projectLangsEdit, HPos.RIGHT);
+
+		GridPane.setHgrow(projectNameEntry, Priority.ALWAYS);
+		GridPane.setHgrow(projectDirEntry, Priority.SOMETIMES);
 		GridPane.setHgrow(projectSrcLangEntry, Priority.ALWAYS);
 		GridPane.setHgrow(projectLangsList, Priority.ALWAYS);
-		
+
 //		body.setGridLinesVisible(true);
 		
 		root.setTop(menu);
@@ -370,7 +371,12 @@ public class MainGUI {
 
 			projectNameEntry.setText(ProjectConfig.json().getString("Project Name"));
 			projectSrcLangEntry.setText(ProjectConfig.json().getString("Src Language"));
-			projectDirEntry.setText(cfgPath.substring(0, cfgPath.indexOf(File.separator) + 1) + "..." + cfgPath.substring(cfgPath.lastIndexOf(File.separator, cfgPath.lastIndexOf(File.separator) - 1)));
+
+			int lastSeparator = cfgPath.lastIndexOf(File.separator);
+			projectDirEntry.setText(cfgPath.substring(0, cfgPath.indexOf(File.separator) + 1) + "..."
+					+ cfgPath.substring(
+							cfgPath.lastIndexOf(File.separator, lastSeparator - 1),
+							lastSeparator + 1));
 
 			for (String key : ProjectConfig.json().getJSONObject("Target Languages").keySet().toArray(new String[0])) {
 				projectLangsList.getItems().add(key);
