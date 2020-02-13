@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module version="4">
-  <component name="ExternalSystem" externalSystem="GRADLE" externalSystemModuleGroup="cc.jerry" externalSystemModuleType="sourceSet" externalSystemModuleVersion="1.0" linkedProjectId="Localization Strings Manager:test" linkedProjectPath="$MODULE_DIR$/../.." rootProjectPath="$MODULE_DIR$/../.." />
-  <component name="TestModuleProperties" production-module="Localization_Strings_Manager.main" />
-</module>
