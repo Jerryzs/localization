@@ -36,3 +36,6 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+# Exclude the library folder
+!lib/*.jar
