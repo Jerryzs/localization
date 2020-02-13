@@ -7,6 +7,8 @@ This project is licensed under Apache License 2.0, see [here](https://www.apache
 
 This application allows you to organize translation strings and export them as localization files for your applications. <br>
 
+Starting from **[version 1.0](https://github.com/Jerryzs/localization/releases/tag/v1.0)**, Java Runtime Environment (JRE) will be bundled with this application and will therefore no longer be required to be pre-installed. 
+
 ## Contribute
 
 If you'd like to contribute to this project, please follow these requirements: 
