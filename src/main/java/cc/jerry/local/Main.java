@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cc.jerry.local.main;
+package cc.jerry.local;
 
 import java.io.*;
 import java.util.Locale;
@@ -47,7 +47,7 @@ public class Main extends Application {
 			System.out.println("[WARNING] Failed to fetch application icon. ");
 		}
 
-		if (OS.os() == SystemType.Mac) { 
+		if (OS.os() == SystemType.MACOS) {
 			try {
 			    String className = "com.apple.eawt.Application";
 			    Class<?> cls = Class.forName(className);
